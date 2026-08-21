@@ -7,14 +7,7 @@ import {
   signOut,
   type User,
 } from "firebase/auth";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { auth } from "./config";
 
 interface AuthContextValue {

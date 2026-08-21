@@ -42,9 +42,8 @@ body {
 .page {
   max-width: 640px;
   margin: 0 auto;
-  padding: max(56px, env(safe-area-inset-top))
-    max(24px, env(safe-area-inset-right)) max(96px, env(safe-area-inset-bottom))
-    max(24px, env(safe-area-inset-left));
+  padding: max(56px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right))
+    max(96px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
 }
 
 .hero {

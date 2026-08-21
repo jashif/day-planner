@@ -1,12 +1,12 @@
 interface ProgressRingProps {
-  percent: number
+  percent: number;
 }
 
-const RADIUS = 52
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS
+const RADIUS = 52;
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export const ProgressRing = ({ percent }: ProgressRingProps) => {
-  const offset = CIRCUMFERENCE - (percent / 100) * CIRCUMFERENCE
+  const offset = CIRCUMFERENCE - (percent / 100) * CIRCUMFERENCE;
 
   return (
     <div className="hero-right">
@@ -22,5 +22,5 @@ export const ProgressRing = ({ percent }: ProgressRingProps) => {
       </svg>
       <span className="ring-label">{percent}%</span>
     </div>
-  )
-}
+  );
+};

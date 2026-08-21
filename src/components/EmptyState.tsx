@@ -1,14 +1,14 @@
-import type { View } from '../types/task'
+import type { View } from "../types/task";
 
 interface EmptyStateProps {
-  view: View
+  view: View;
 }
 
 const COPY: Record<View, string> = {
-  today: 'Nothing planned for today — add your first task above.',
-  upcoming: 'No upcoming tasks yet.',
-  all: 'Your list is empty. Add something to get started.'
-}
+  today: "Nothing planned for today — add your first task above.",
+  upcoming: "No upcoming tasks yet.",
+  all: "Your list is empty. Add something to get started.",
+};
 
 export const EmptyState = ({ view }: EmptyStateProps) => {
   return (
@@ -19,5 +19,5 @@ export const EmptyState = ({ view }: EmptyStateProps) => {
       </svg>
       <p>{COPY[view]}</p>
     </div>
-  )
-}
+  );
+};

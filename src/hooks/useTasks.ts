@@ -1,10 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import {
-  addTask,
-  deleteTask,
-  subscribeToTasks,
-  updateTask,
-} from "../db/tasksDb";
+import { addTask, deleteTask, subscribeToTasks, updateTask } from "../db/tasksDb";
 import type { NewTaskInput, Subtask, Task } from "../types/task";
 
 export const useTasks = (uid: string) => {
@@ -85,9 +80,7 @@ export const useTasks = (uid: string) => {
     async (id: string, subtaskId: string) => {
       const task = tasks.find((t) => t.id === id);
       if (!task?.subtasks) return;
-      const subtasks = task.subtasks.map((s) =>
-        s.id === subtaskId ? { ...s, done: !s.done } : s,
-      );
+      const subtasks = task.subtasks.map((s) => (s.id === subtaskId ? { ...s, done: !s.done } : s));
       try {
         await updateTask(uid, id, { subtasks });
         setError(null);

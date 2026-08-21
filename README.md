@@ -80,7 +80,6 @@ npm run preview # preview the production build locally
    Logic product to stop unauthorized clients from burning through your
    free-tier quota.
 
-
 ## Deploy — GitHub + Netlify
 
 1. Push to a new GitHub repo:
