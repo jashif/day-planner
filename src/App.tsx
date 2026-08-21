@@ -4,6 +4,7 @@ import { Composer } from "./components/Composer";
 import { Tabs } from "./components/Tabs";
 import { TaskList } from "./components/TaskList";
 import { AuthScreen } from "./components/AuthScreen";
+import { TopBar } from "./components/TopBar";
 import { useAuth } from "./firebase/AuthProvider";
 import { useTasks } from "./hooks/useTasks";
 import { useDailyBreakdownLimit } from "./hooks/useDailyBreakdownLimit";
@@ -21,6 +22,7 @@ const PlannerApp = ({ uid, email }: { uid: string; email: string | null }) => {
 
   return (
     <div className="page">
+      <TopBar email={email} onSignOut={logOut} />
       <Header todaysTasks={todaysTasks} />
       {error && <p className="sync-error">Couldn&apos;t sync: {error}</p>}
       <Composer onAdd={createTask} />
@@ -36,12 +38,6 @@ const PlannerApp = ({ uid, email }: { uid: string; email: string | null }) => {
           breakdownLimit={breakdownLimit}
         />
       </main>
-      <footer className="foot">
-        <span>Synced as {email}</span>
-        <button className="sign-out-btn" type="button" onClick={logOut}>
-          Sign out
-        </button>
-      </footer>
     </div>
   );
 };

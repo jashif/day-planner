@@ -1,15 +1,49 @@
 :root {
+  color-scheme: light;
   --paper: #faf9f6;
   --paper-raised: #ffffff;
   --ink: #1f1e1b;
-  --ink-soft: #726d64;
-  --ink-faint: #a39d92;
+  --ink-soft: #6b665d;
+  --ink-faint: #868073;
   --line: #e7e3da;
-  --sage: #6f8f6b;
-  --ochre: #c99b4a;
-  --rose: #b06a5c;
+  --sage: #4f7a4a;
+  --ochre: #97701f;
+  --rose: #a14a3a;
   --shadow: 0 1px 2px rgba(31, 30, 27, 0.04), 0 8px 24px rgba(31, 30, 27, 0.05);
   --radius: 14px;
+  --focus-ring: 0 0 0 3px rgba(79, 122, 74, 0.35);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #18171b;
+  --paper-raised: #221f24;
+  --ink: #f2efe9;
+  --ink-soft: #bdb6a9;
+  --ink-faint: #8e8779;
+  --line: #37343a;
+  --sage: #8fbb87;
+  --ochre: #e0b563;
+  --rose: #e08c78;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --focus-ring: 0 0 0 3px rgba(143, 187, 135, 0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #18171b;
+    --paper-raised: #221f24;
+    --ink: #f2efe9;
+    --ink-soft: #bdb6a9;
+    --ink-faint: #8e8779;
+    --line: #37343a;
+    --sage: #8fbb87;
+    --ochre: #e0b563;
+    --rose: #e08c78;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+    --focus-ring: 0 0 0 3px rgba(143, 187, 135, 0.4);
+  }
 }
 
 * {
@@ -17,7 +51,7 @@
 }
 
 html {
-  color-scheme: light;
+  color-scheme: light dark;
 }
 
 body {
@@ -33,10 +67,27 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 #root {
   min-height: 100vh;
+}
+
+a,
+button,
+input,
+select,
+textarea {
+  color-scheme: inherit;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: 6px;
 }
 
 .page {
@@ -134,7 +185,7 @@ body {
   padding: 10px 14px;
   border: 1px solid var(--rose);
   border-radius: 8px;
-  background: rgba(176, 106, 92, 0.08);
+  background: color-mix(in srgb, var(--rose) 10%, transparent);
   color: var(--rose);
   font-size: 13px;
 }
@@ -572,16 +623,30 @@ body {
   line-height: 1.5;
 }
 
-.foot {
-  margin-top: 48px;
+.topbar {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 12px;
-  text-align: center;
+  margin-bottom: 20px;
+}
+
+.topbar-email {
+  flex: 1;
+  min-width: 0;
   font-family: "IBM Plex Mono", monospace;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--ink-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .sign-out-btn {
@@ -600,6 +665,28 @@ body {
   color: var(--ink);
 }
 
+.theme-toggle {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-soft);
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--ink-faint);
+  color: var(--ink);
+}
+
 .auth-page {
   display: flex;
   align-items: center;
@@ -613,6 +700,17 @@ body {
   max-width: 380px;
   margin-bottom: 0;
   padding: 28px;
+}
+
+.auth-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.auth-card-top .eyebrow {
+  margin: 0;
 }
 
 .auth-form {
@@ -685,6 +783,10 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .ring-fill {
+    transition: none;
+  }
+
+  body {
     transition: none;
   }
 }

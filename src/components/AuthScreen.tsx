@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useAuth } from "../firebase/AuthProvider";
+import { ThemeToggle } from "./ThemeToggle";
 
 type Mode = "signin" | "signup";
 
@@ -58,7 +59,10 @@ export const AuthScreen = () => {
   return (
     <div className="page auth-page">
       <div className="composer auth-card">
-        <p className="eyebrow">day planner</p>
+        <div className="auth-card-top">
+          <p className="eyebrow">day planner</p>
+          <ThemeToggle />
+        </div>
         <h1 className="date-heading">
           {mode === "signin" ? "Welcome back" : "Create your account"}
         </h1>

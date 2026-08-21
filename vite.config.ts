@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["apple-touch-icon.png"],
+      includeAssets: ["apple-touch-icon.png", "favicon-32.png", "favicon-16.png"],
       manifest: {
         name: "Day — a quiet planner",
         short_name: "Day",
