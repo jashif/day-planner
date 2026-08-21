@@ -42,7 +42,8 @@ body {
 .page {
   max-width: 640px;
   margin: 0 auto;
-  padding: 56px 24px 96px;
+  padding: max(56px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right))
+    max(96px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
 }
 
 .hero {
@@ -51,6 +52,11 @@ body {
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 40px;
+}
+
+.hero-left {
+  flex: 1;
+  min-width: 0;
 }
 
 .eyebrow {
@@ -169,7 +175,7 @@ body {
   background: var(--paper);
   color: var(--ink-soft);
   font-family: "IBM Plex Mono", monospace;
-  font-size: 13px;
+  font-size: 16px;
   padding: 8px 10px;
   outline: none;
 }
@@ -181,7 +187,7 @@ body {
 
 .priority-field {
   font-family: "Inter", sans-serif;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .add-btn {
@@ -438,7 +444,7 @@ body {
   width: 100%;
   padding: 11px 12px;
   font-family: "Inter", sans-serif;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .auth-error {
