@@ -81,6 +81,8 @@ export const TaskRow = ({
       <div className="task-row-main">
         <button
           className={`check ${task.done ? "is-checked" : ""}`}
+          role="checkbox"
+          aria-checked={task.done}
           aria-label="Mark done"
           onClick={() => onToggle(task.id)}
         >
@@ -144,6 +146,8 @@ export const TaskRow = ({
                   <li className="subtask-item" key={subtask.id}>
                     <button
                       className={`check subtask-check ${subtask.done ? "is-checked" : ""}`}
+                      role="checkbox"
+                      aria-checked={subtask.done}
                       aria-label="Mark step done"
                       onClick={() => onToggleSubtask(task.id, subtask.id)}
                     >
