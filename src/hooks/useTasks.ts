@@ -5,7 +5,7 @@ import {
   subscribeToTasks,
   updateTask,
 } from "../db/tasksDb";
-import type { NewTaskInput, Task } from "../types/task";
+import type { NewTaskInput, Subtask, Task } from "../types/task";
 
 export const useTasks = (uid: string) => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -68,5 +68,44 @@ export const useTasks = (uid: string) => {
     [uid],
   );
 
-  return { tasks, isLoading, error, createTask, toggleTask, removeTask };
+  const setSubtasks = useCallback(
+    async (id: string, subtasks: Subtask[]) => {
+      try {
+        await updateTask(uid, id, { subtasks });
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to save breakdown");
+        throw err;
+      }
+    },
+    [uid],
+  );
+
+  const toggleSubtask = useCallback(
+    async (id: string, subtaskId: string) => {
+      const task = tasks.find((t) => t.id === id);
+      if (!task?.subtasks) return;
+      const subtasks = task.subtasks.map((s) =>
+        s.id === subtaskId ? { ...s, done: !s.done } : s,
+      );
+      try {
+        await updateTask(uid, id, { subtasks });
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to update step");
+      }
+    },
+    [uid, tasks],
+  );
+
+  return {
+    tasks,
+    isLoading,
+    error,
+    createTask,
+    toggleTask,
+    removeTask,
+    setSubtasks,
+    toggleSubtask,
+  };
 };

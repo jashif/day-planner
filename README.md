@@ -14,14 +14,19 @@ Built with React 19, TypeScript, Vite, and Firebase (Auth + Firestore).
   offline persistence via `persistentLocalCache`
 - Installable PWA (`vite-plugin-pwa`) — add to home screen on phone/desktop,
   works offline via a generated service worker
+- AI task breakdown ("Break it down") powered by Firebase AI Logic (Gemini
+  Developer API, free tier) — splits a task into a checklist of smaller,
+  actionable steps, called directly from the client via Firebase's proxy so
+  no API key is ever exposed in app code
 
 ## Structure
 
 ```
 src/
-  types/task.ts          task, priority, and view types
+  types/task.ts          task, priority, view, and subtask types
   db/tasksDb.ts          Firestore read/write/subscribe layer
-  firebase/config.ts     Firebase app/auth/Firestore init
+  ai/breakdownTask.ts    Gemini prompt + structured JSON output for step breakdown
+  firebase/config.ts     Firebase app/auth/Firestore/AI Logic init
   firebase/AuthProvider.tsx  auth context (sign in/up, Google, sign out)
   hooks/useTasks.ts      per-user realtime task subscription + mutations
   utils/dates.ts         date formatting helpers
@@ -32,7 +37,7 @@ src/
     Composer.tsx           add-task form
     Tabs.tsx               Today / Upcoming / All
     TaskList.tsx           grouping + sorting + empty state
-    TaskRow.tsx            single task row
+    TaskRow.tsx            single task row + AI breakdown panel
     EmptyState.tsx         empty state copy + icon
   App.tsx
   main.tsx
@@ -67,6 +72,14 @@ npm run preview # preview the production build locally
    `VITE_FIREBASE_*` variables to Netlify's site environment variables.
 6. Add your Netlify domain to **Authentication → Settings → Authorized
    domains** so Google sign-in works in production.
+7. Enable **Build → AI Logic** in the console, choose the **Gemini Developer
+   API** as the backend (this is the free-tier option), and follow the
+   guided setup. No extra env vars are needed — it reuses your existing
+   Firebase web config.
+8. (Recommended before wider use) Set up **Firebase App Check** on the AI
+   Logic product to stop unauthorized clients from burning through your
+   free-tier quota.
+
 
 ## Deploy — GitHub + Netlify
 
