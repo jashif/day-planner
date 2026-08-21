@@ -351,11 +351,14 @@ body {
   line-height: 1;
   cursor: pointer;
   padding: 4px;
-  opacity: 0;
-  transition: opacity 0.15s ease;
+  opacity: 0.55;
+  transition:
+    opacity 0.15s ease,
+    color 0.15s ease;
 }
 
-.task-row:hover .remove-btn {
+.task-row:hover .remove-btn,
+.remove-btn:focus-visible {
   opacity: 1;
 }
 

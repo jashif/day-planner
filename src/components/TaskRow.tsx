@@ -1,17 +1,17 @@
-import { formatTime } from '../utils/dates'
-import type { Task } from '../types/task'
+import { formatTime } from "../utils/dates";
+import type { Task } from "../types/task";
 
 interface TaskRowProps {
-  task: Task
-  onToggle: (id: string) => void
-  onRemove: (id: string) => void
+  task: Task;
+  onToggle: (id: string) => void;
+  onRemove: (id: string) => void;
 }
 
 export const TaskRow = ({ task, onToggle, onRemove }: TaskRowProps) => {
   return (
-    <div className={`task-row ${task.done ? 'is-done' : ''}`}>
+    <div className={`task-row ${task.done ? "is-done" : ""}`}>
       <button
-        className={`check ${task.done ? 'is-checked' : ''}`}
+        className={`check ${task.done ? "is-checked" : ""}`}
         aria-label="Mark done"
         onClick={() => onToggle(task.id)}
       >
@@ -29,12 +29,20 @@ export const TaskRow = ({ task, onToggle, onRemove }: TaskRowProps) => {
         <div className="task-title">{task.title}</div>
         <div className="task-meta">
           <span className={`priority-dot ${task.priority}`} />
-          {task.time && <span className="task-time">{formatTime(task.time)}</span>}
+          {task.time && (
+            <span className="task-time">{formatTime(task.time)}</span>
+          )}
         </div>
       </div>
-      <button className="remove-btn" aria-label="Delete task" onClick={() => onRemove(task.id)}>
+      <button
+        className="remove-btn"
+        aria-label="Delete task"
+        onClick={() => {
+          if (window.confirm(`Delete "${task.title}"?`)) onRemove(task.id);
+        }}
+      >
         ×
       </button>
     </div>
-  )
-}
+  );
+};
