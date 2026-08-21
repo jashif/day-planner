@@ -89,4 +89,3 @@ npm run preview # preview the production build locally
      Netlify's site settings.
 
 3. Deploy. Every push to `main` redeploys automatically.
-
