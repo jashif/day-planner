@@ -12,6 +12,8 @@ Built with React 19, TypeScript, Vite, and Firebase (Auth + Firestore).
 - Firebase Authentication (email/password + Google) for accounts
 - Firestore for task storage, scoped per user at `users/{uid}/tasks`, with
   offline persistence via `persistentLocalCache`
+- Installable PWA (`vite-plugin-pwa`) — add to home screen on phone/desktop,
+  works offline via a generated service worker
 
 ## Structure
 
