@@ -100,15 +100,25 @@ export const TaskRow = ({
             <span className={`priority-dot ${task.priority}`} />
             {task.time && <span className="task-time">{formatTime(task.time)}</span>}
             {subtasks.length > 0 && (
-              <span className="task-time">
+              <button
+                className={`steps-badge ${doneCount === subtasks.length ? "is-complete" : ""}`}
+                type="button"
+                onClick={() => setIsOpen(!isOpen)}
+              >
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <rect x="0.5" y="0.5" width="4" height="4" rx="1" stroke="currentColor" />
+                  <path d="M1.3 2.5 1.9 3.1 3.2 1.7" stroke="currentColor" strokeLinecap="round" />
+                  <rect x="0.5" y="7.5" width="4" height="4" rx="1" stroke="currentColor" />
+                  <path d="M6.5 2h5.5M6.5 9.5h5.5" stroke="currentColor" strokeLinecap="round" />
+                </svg>
                 {doneCount}/{subtasks.length} steps
-              </span>
+              </button>
             )}
           </div>
         </div>
         <button
-          className={`breakdown-toggle ${isOpen ? "is-active" : ""}`}
-          aria-label="Break task into steps"
+          className={`breakdown-toggle ${isOpen ? "is-active" : ""} ${subtasks.length > 0 ? "has-steps" : ""}`}
+          aria-label={subtasks.length > 0 ? "View task steps" : "Break task into steps"}
           aria-expanded={isOpen}
           onClick={() => setIsOpen(!isOpen)}
         >
