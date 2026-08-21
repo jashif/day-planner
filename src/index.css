@@ -211,6 +211,74 @@ textarea {
   color: var(--ink-faint);
 }
 
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.title-row .title-input {
+  flex: 1;
+}
+
+.mic-btn {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-soft);
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.mic-btn:hover:not(:disabled) {
+  border-color: var(--ink-faint);
+  color: var(--ink);
+}
+
+.mic-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.mic-btn.is-listening {
+  border-color: var(--rose);
+  color: var(--rose);
+  background: color-mix(in srgb, var(--rose) 12%, transparent);
+  animation: mic-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes mic-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--rose) 35%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--rose) 0%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mic-btn.is-listening {
+    animation: none;
+  }
+}
+
+.voice-status {
+  margin: -4px 0 0;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
 .task-form-row {
   display: flex;
   align-items: center;
