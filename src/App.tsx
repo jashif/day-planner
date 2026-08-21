@@ -25,7 +25,7 @@ const PlannerApp = ({ uid, email }: { uid: string; email: string | null }) => {
       <TopBar email={email} onSignOut={logOut} />
       <Header todaysTasks={todaysTasks} />
       {error && <p className="sync-error">Couldn&apos;t sync: {error}</p>}
-      <Composer onAdd={createTask} aiLimit={aiLimit} />
+      <Composer onAdd={createTask} />
       <Tabs activeView={view} onChange={setView} />
       <main className="list-wrap">
         <TaskList

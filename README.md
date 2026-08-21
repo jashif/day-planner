@@ -18,17 +18,17 @@ Built with React 19, TypeScript, Vite, and Firebase (Auth + Firestore).
   Developer API, free tier) — splits a task into a checklist of smaller,
   actionable steps, called directly from the client via Firebase's proxy so
   no API key is ever exposed in app code
-- Daily free-tier limit of 5 AI actions per user per day (task breakdown +
-  voice task capture share one quota), enforced by Firestore security rules
-  (not just client-side UI) via a `users/{uid}/usage/{day}` counter doc.
-  Paid tier for more is planned but not yet built.
-- Voice task capture (🎙️ in the composer) — uses the browser's built-in
-  Speech-to-Text (Web Speech API, no extra cost), then sends the transcript to
-  Gemini to correct errors, strip filler words, and resolve relative dates
-  ("tomorrow", "next Friday") into a structured title/date/time/priority. The
-  parsed result fills the form for you to review before adding — nothing is
-  created without your confirmation. Falls back gracefully (button hidden) in
-  browsers without speech recognition support (e.g. Firefox).
+- Daily free-tier limit of 5 AI actions per user per day (currently just task
+  breakdown), enforced by Firestore security rules (not just client-side UI)
+  via a `users/{uid}/usage/{day}` counter doc. Paid tier for more is planned
+  but not yet built.
+- Voice task capture (🎤️ in the composer) — uses the browser's built-in
+  Speech-to-Text (Web Speech API) to fill the title field, with light
+  client-side cleanup (trims filler phrases like "remind me to...", capitalizes
+  the result). Entirely free and instant — no AI call, no daily-limit usage.
+  You still review/edit the title and set date/time/priority before adding.
+  Falls back gracefully (button hidden) in browsers without speech
+  recognition support (e.g. Firefox).
 - Light/dark theme via CSS custom properties, following the OS preference by
   default with a manual toggle (persisted in `localStorage`) that overrides it.
   Applied before first paint to avoid a flash of the wrong theme.
@@ -44,10 +44,10 @@ src/
   types/task.ts          task, priority, view, and subtask types
   db/tasksDb.ts          Firestore read/write/subscribe layer
   ai/breakdownTask.ts    Gemini prompt + structured JSON output for step breakdown
-  ai/parseVoiceTask.ts   Gemini prompt + structured JSON output for voice task capture
-  db/usageDb.ts          shared daily AI-usage counter (read/increment)
+  db/usageDb.ts          daily AI-usage counter (read/increment) for breakdowns
   hooks/useDailyAiLimit.ts  exposes remaining/limit/recordUsage for the day
   hooks/useSpeechRecognition.ts  thin wrapper over the Web Speech API
+  utils/voiceTranscript.ts  client-side transcript cleanup (no AI call)
   firebase/config.ts     Firebase app/auth/Firestore/AI Logic init
   firebase/AuthProvider.tsx  auth context (sign in/up, Google, sign out)
   hooks/useTasks.ts      per-user realtime task subscription + mutations
