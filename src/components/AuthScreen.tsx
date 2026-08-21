@@ -12,10 +12,8 @@ const friendlyError = (error: unknown): string => {
   ) {
     return "Incorrect email or password.";
   }
-  if (code.includes("email-already-in-use"))
-    return "An account with that email already exists.";
-  if (code.includes("weak-password"))
-    return "Password should be at least 6 characters.";
+  if (code.includes("email-already-in-use")) return "An account with that email already exists.";
+  if (code.includes("weak-password")) return "Password should be at least 6 characters.";
   if (code.includes("invalid-email")) return "Enter a valid email address.";
   return "Something went wrong. Please try again.";
 };
@@ -80,20 +78,14 @@ export const AuthScreen = () => {
             className="field auth-field"
             type="password"
             placeholder="Password"
-            autoComplete={
-              mode === "signin" ? "current-password" : "new-password"
-            }
+            autoComplete={mode === "signin" ? "current-password" : "new-password"}
             minLength={6}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
           {error && <p className="auth-error">{error}</p>}
-          <button
-            className="add-btn auth-submit"
-            type="submit"
-            disabled={isSubmitting}
-          >
+          <button className="add-btn auth-submit" type="submit" disabled={isSubmitting}>
             {mode === "signin" ? "Sign in" : "Sign up"}
           </button>
         </form>

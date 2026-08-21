@@ -1,41 +1,41 @@
-import { EmptyState } from './EmptyState'
-import { TaskRow } from './TaskRow'
-import { formatGroupLabel, todayISO } from '../utils/dates'
-import type { Subtask, Task, View } from '../types/task'
+import { EmptyState } from "./EmptyState";
+import { TaskRow } from "./TaskRow";
+import { formatGroupLabel, todayISO } from "../utils/dates";
+import type { Subtask, Task, View } from "../types/task";
 
 interface TaskListProps {
-  tasks: Task[]
-  view: View
-  onToggle: (id: string) => void
-  onRemove: (id: string) => void
-  onSetSubtasks: (id: string, subtasks: Subtask[]) => Promise<void>
-  onToggleSubtask: (id: string, subtaskId: string) => Promise<void>
+  tasks: Task[];
+  view: View;
+  onToggle: (id: string) => void;
+  onRemove: (id: string) => void;
+  onSetSubtasks: (id: string, subtasks: Subtask[]) => Promise<void>;
+  onToggleSubtask: (id: string, subtaskId: string) => Promise<void>;
 }
 
 const filterTasksForView = (tasks: Task[], view: View): Task[] => {
-  const today = todayISO()
-  if (view === 'today') return tasks.filter((t) => t.date === today)
-  if (view === 'upcoming') return tasks.filter((t) => t.date > today)
-  return tasks
-}
+  const today = todayISO();
+  if (view === "today") return tasks.filter((t) => t.date === today);
+  if (view === "upcoming") return tasks.filter((t) => t.date > today);
+  return tasks;
+};
 
 const sortTasks = (tasks: Task[]): Task[] =>
   [...tasks].sort((a, b) => {
-    if (a.date !== b.date) return a.date < b.date ? -1 : 1
-    if (!!a.time !== !!b.time) return a.time ? -1 : 1
-    if (a.time && b.time && a.time !== b.time) return a.time < b.time ? -1 : 1
-    return a.createdAt - b.createdAt
-  })
+    if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+    if (!!a.time !== !!b.time) return a.time ? -1 : 1;
+    if (a.time && b.time && a.time !== b.time) return a.time < b.time ? -1 : 1;
+    return a.createdAt - b.createdAt;
+  });
 
 const groupByDate = (tasks: Task[]): [string, Task[]][] => {
-  const groups = new Map<string, Task[]>()
+  const groups = new Map<string, Task[]>();
   tasks.forEach((task) => {
-    const key = task.date
-    if (!groups.has(key)) groups.set(key, [])
-    groups.get(key)!.push(task)
-  })
-  return Array.from(groups.entries())
-}
+    const key = task.date;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(task);
+  });
+  return Array.from(groups.entries());
+};
 
 export const TaskList = ({
   tasks,
@@ -43,15 +43,15 @@ export const TaskList = ({
   onToggle,
   onRemove,
   onSetSubtasks,
-  onToggleSubtask
+  onToggleSubtask,
 }: TaskListProps) => {
-  const filtered = sortTasks(filterTasksForView(tasks, view))
+  const filtered = sortTasks(filterTasksForView(tasks, view));
 
   if (filtered.length === 0) {
-    return <EmptyState view={view} />
+    return <EmptyState view={view} />;
   }
 
-  if (view === 'today') {
+  if (view === "today") {
     return (
       <>
         {filtered.map((task) => (
@@ -65,7 +65,7 @@ export const TaskList = ({
           />
         ))}
       </>
-    )
+    );
   }
 
   return (
@@ -86,5 +86,5 @@ export const TaskList = ({
         </div>
       ))}
     </>
-  )
-}
+  );
+};
