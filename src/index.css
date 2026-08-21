@@ -42,8 +42,9 @@ body {
 .page {
   max-width: 640px;
   margin: 0 auto;
-  padding: max(56px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right))
-    max(96px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+  padding: max(56px, env(safe-area-inset-top))
+    max(24px, env(safe-area-inset-right)) max(96px, env(safe-area-inset-bottom))
+    max(24px, env(safe-area-inset-left));
 }
 
 .hero {
@@ -256,12 +257,10 @@ body {
 
 .task-row {
   display: flex;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;
   background: var(--paper-raised);
   border: 1px solid var(--line);
   border-radius: 10px;
-  padding: 14px 16px;
   margin-bottom: 8px;
   transition: border-color 0.15s ease;
 }
@@ -272,6 +271,13 @@ body {
 
 .task-row.is-done {
   opacity: 0.5;
+}
+
+.task-row-main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
 }
 
 .check {
@@ -373,6 +379,162 @@ body {
 }
 
 .remove-btn:hover {
+  color: var(--rose);
+}
+
+.breakdown-toggle {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  opacity: 0.6;
+  transition:
+    opacity 0.15s ease,
+    background 0.15s ease;
+}
+
+.task-row:hover .breakdown-toggle,
+.breakdown-toggle:focus-visible,
+.breakdown-toggle.is-active {
+  opacity: 1;
+}
+
+.breakdown-toggle.is-active {
+  background: var(--paper);
+}
+
+.breakdown-toggle:hover {
+  background: var(--paper);
+}
+
+.breakdown-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--line);
+}
+
+.breakdown-hint {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+
+.breakdown-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.detail-segmented {
+  display: flex;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.detail-option {
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  padding: 7px 12px;
+  cursor: pointer;
+}
+
+.detail-option + .detail-option {
+  border-left: 1px solid var(--line);
+}
+
+.detail-option.is-active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.breakdown-generate {
+  margin-left: 0;
+}
+
+.breakdown-link {
+  border: none;
+  background: transparent;
+  color: var(--sage);
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.breakdown-link:hover {
+  text-decoration: underline;
+}
+
+.breakdown-error {
+  margin: 0;
+  color: var(--rose);
+  font-size: 13px;
+}
+
+.subtask-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.subtask-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.subtask-check {
+  width: 18px;
+  height: 18px;
+}
+
+.subtask-check svg {
+  width: 9px;
+  height: 9px;
+}
+
+.subtask-title {
+  flex: 1;
+  font-size: 14px;
+  color: var(--ink);
+  overflow-wrap: break-word;
+}
+
+.subtask-title.is-done {
+  color: var(--ink-faint);
+  text-decoration: line-through;
+  text-decoration-color: var(--ink-faint);
+}
+
+.subtask-remove {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: var(--ink-faint);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+  opacity: 0.5;
+}
+
+.subtask-remove:hover {
+  opacity: 1;
   color: var(--rose);
 }
 

@@ -1,13 +1,15 @@
 import { EmptyState } from './EmptyState'
 import { TaskRow } from './TaskRow'
 import { formatGroupLabel, todayISO } from '../utils/dates'
-import type { Task, View } from '../types/task'
+import type { Subtask, Task, View } from '../types/task'
 
 interface TaskListProps {
   tasks: Task[]
   view: View
   onToggle: (id: string) => void
   onRemove: (id: string) => void
+  onSetSubtasks: (id: string, subtasks: Subtask[]) => Promise<void>
+  onToggleSubtask: (id: string, subtaskId: string) => Promise<void>
 }
 
 const filterTasksForView = (tasks: Task[], view: View): Task[] => {
@@ -35,7 +37,14 @@ const groupByDate = (tasks: Task[]): [string, Task[]][] => {
   return Array.from(groups.entries())
 }
 
-export const TaskList = ({ tasks, view, onToggle, onRemove }: TaskListProps) => {
+export const TaskList = ({
+  tasks,
+  view,
+  onToggle,
+  onRemove,
+  onSetSubtasks,
+  onToggleSubtask
+}: TaskListProps) => {
   const filtered = sortTasks(filterTasksForView(tasks, view))
 
   if (filtered.length === 0) {
@@ -46,7 +55,14 @@ export const TaskList = ({ tasks, view, onToggle, onRemove }: TaskListProps) => 
     return (
       <>
         {filtered.map((task) => (
-          <TaskRow key={task.id} task={task} onToggle={onToggle} onRemove={onRemove} />
+          <TaskRow
+            key={task.id}
+            task={task}
+            onToggle={onToggle}
+            onRemove={onRemove}
+            onSetSubtasks={onSetSubtasks}
+            onToggleSubtask={onToggleSubtask}
+          />
         ))}
       </>
     )
@@ -58,7 +74,14 @@ export const TaskList = ({ tasks, view, onToggle, onRemove }: TaskListProps) => 
         <div className="day-group" key={date}>
           <p className="day-group-label">{formatGroupLabel(date)}</p>
           {group.map((task) => (
-            <TaskRow key={task.id} task={task} onToggle={onToggle} onRemove={onRemove} />
+            <TaskRow
+              key={task.id}
+              task={task}
+              onToggle={onToggle}
+              onRemove={onRemove}
+              onSetSubtasks={onSetSubtasks}
+              onToggleSubtask={onToggleSubtask}
+            />
           ))}
         </div>
       ))}

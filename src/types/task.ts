@@ -2,6 +2,14 @@ export type Priority = 'low' | 'medium' | 'high'
 
 export type View = 'today' | 'upcoming' | 'all'
 
+export type BreakdownDetail = 'quick' | 'normal' | 'thorough'
+
+export interface Subtask {
+  id: string
+  title: string
+  done: boolean
+}
+
 export interface Task {
   id: string
   title: string
@@ -10,6 +18,7 @@ export interface Task {
   priority: Priority
   done: boolean
   createdAt: number
+  subtasks?: Subtask[]
 }
 
 export interface NewTaskInput {
@@ -18,3 +27,4 @@ export interface NewTaskInput {
   time: string
   priority: Priority
 }
+

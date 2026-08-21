@@ -5,6 +5,7 @@ import {
   persistentLocalCache,
   persistentSingleTabManager,
 } from "firebase/firestore";
+import { getAI, GoogleAIBackend } from "firebase/ai";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -24,3 +25,7 @@ export const db = initializeFirestore(app, {
     tabManager: persistentSingleTabManager({}),
   }),
 });
+
+// Gemini Developer API backend — free tier, key never leaves Firebase's proxy.
+export const ai = getAI(app, { backend: new GoogleAIBackend() });
+

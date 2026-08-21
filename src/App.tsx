@@ -10,7 +10,8 @@ import { todayISO } from "./utils/dates";
 import type { View } from "./types/task";
 
 const PlannerApp = ({ uid, email }: { uid: string; email: string | null }) => {
-  const { tasks, error, createTask, toggleTask, removeTask } = useTasks(uid);
+  const { tasks, error, createTask, toggleTask, removeTask, setSubtasks, toggleSubtask } =
+    useTasks(uid);
   const [view, setView] = useState<View>("today");
   const { logOut } = useAuth();
   const today = todayISO();
@@ -28,6 +29,8 @@ const PlannerApp = ({ uid, email }: { uid: string; email: string | null }) => {
           view={view}
           onToggle={toggleTask}
           onRemove={removeTask}
+          onSetSubtasks={setSubtasks}
+          onToggleSubtask={toggleSubtask}
         />
       </main>
       <footer className="foot">
