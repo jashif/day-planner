@@ -18,6 +18,9 @@ Built with React 19, TypeScript, Vite, and Firebase (Auth + Firestore).
   Developer API, free tier) — splits a task into a checklist of smaller,
   actionable steps, called directly from the client via Firebase's proxy so
   no API key is ever exposed in app code
+- Daily free-tier limit of 5 AI breakdowns per user per day, enforced by
+  Firestore security rules (not just client-side UI) via a `users/{uid}/usage/{day}`
+  counter doc. Paid tier for more is planned but not yet built.
 
 ## Structure
 
@@ -26,6 +29,8 @@ src/
   types/task.ts          task, priority, view, and subtask types
   db/tasksDb.ts          Firestore read/write/subscribe layer
   ai/breakdownTask.ts    Gemini prompt + structured JSON output for step breakdown
+  db/usageDb.ts          daily AI-breakdown usage counter (read/increment)
+  hooks/useDailyBreakdownLimit.ts  exposes remaining/limit/recordUsage for the day
   firebase/config.ts     Firebase app/auth/Firestore/AI Logic init
   firebase/AuthProvider.tsx  auth context (sign in/up, Google, sign out)
   hooks/useTasks.ts      per-user realtime task subscription + mutations

@@ -6,12 +6,14 @@ import { TaskList } from "./components/TaskList";
 import { AuthScreen } from "./components/AuthScreen";
 import { useAuth } from "./firebase/AuthProvider";
 import { useTasks } from "./hooks/useTasks";
+import { useDailyBreakdownLimit } from "./hooks/useDailyBreakdownLimit";
 import { todayISO } from "./utils/dates";
 import type { View } from "./types/task";
 
 const PlannerApp = ({ uid, email }: { uid: string; email: string | null }) => {
   const { tasks, error, createTask, toggleTask, removeTask, setSubtasks, toggleSubtask } =
     useTasks(uid);
+  const breakdownLimit = useDailyBreakdownLimit(uid);
   const [view, setView] = useState<View>("today");
   const { logOut } = useAuth();
   const today = todayISO();
@@ -31,6 +33,7 @@ const PlannerApp = ({ uid, email }: { uid: string; email: string | null }) => {
           onRemove={removeTask}
           onSetSubtasks={setSubtasks}
           onToggleSubtask={toggleSubtask}
+          breakdownLimit={breakdownLimit}
         />
       </main>
       <footer className="foot">

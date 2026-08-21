@@ -5,5 +5,17 @@ service cloud.firestore {
     match /users/{uid}/tasks/{taskId} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
+
+    // Daily AI-breakdown usage counter, one doc per user per calendar day (id = "YYYY-MM-DD").
+    // Enforces the free-tier cap server-side so it can't be bypassed by editing client code.
+    match /users/{uid}/usage/{day} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.breakdownCount == 1;
+      allow update: if request.auth != null && request.auth.uid == uid
+        && resource.data.breakdownCount < 5
+        && request.resource.data.breakdownCount == resource.data.breakdownCount + 1;
+    }
   }
 }
+
