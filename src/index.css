@@ -29,6 +29,8 @@ body {
     -apple-system,
     BlinkMacSystemFont,
     sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
 }
@@ -52,9 +54,9 @@ body {
 }
 
 .eyebrow {
-  margin: 0 0 6px;
+  margin: 0 0 8px;
   font-family: "IBM Plex Mono", monospace;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-faint);
@@ -64,15 +66,16 @@ body {
   margin: 0;
   font-family: "Fraunces", serif;
   font-weight: 500;
-  font-size: 34px;
+  font-size: 38px;
   line-height: 1.15;
   letter-spacing: -0.01em;
 }
 
 .sub {
-  margin: 8px 0 0;
+  margin: 10px 0 0;
   color: var(--ink-soft);
-  font-size: 14px;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 .hero-right {
@@ -107,7 +110,7 @@ body {
   align-items: center;
   justify-content: center;
   font-family: "IBM Plex Mono", monospace;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink-soft);
 }
 
@@ -140,10 +143,10 @@ body {
   border: none;
   outline: none;
   font-family: "Inter", sans-serif;
-  font-size: 16px;
+  font-size: 17px;
   color: var(--ink);
   background: transparent;
-  padding: 4px 2px;
+  padding: 6px 2px;
   width: 100%;
 }
 
@@ -166,8 +169,8 @@ body {
   background: var(--paper);
   color: var(--ink-soft);
   font-family: "IBM Plex Mono", monospace;
-  font-size: 12px;
-  padding: 7px 9px;
+  font-size: 13px;
+  padding: 8px 10px;
   outline: none;
 }
 
@@ -178,7 +181,7 @@ body {
 
 .priority-field {
   font-family: "Inter", sans-serif;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .add-btn {
@@ -187,9 +190,9 @@ body {
   background: var(--ink);
   color: var(--paper);
   font-family: "Inter", sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  padding: 9px 16px;
+  padding: 10px 18px;
   border-radius: 8px;
   cursor: pointer;
   transition: opacity 0.15s ease;
@@ -211,9 +214,9 @@ body {
   background: transparent;
   color: var(--ink-faint);
   font-family: "Inter", sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  padding: 10px 14px;
+  padding: 12px 14px;
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transform: translateY(1px);
@@ -238,21 +241,21 @@ body {
 
 .day-group-label {
   font-family: "IBM Plex Mono", monospace;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-faint);
-  margin: 0 0 10px 4px;
+  margin: 0 0 12px 4px;
 }
 
 .task-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   background: var(--paper-raised);
   border: 1px solid var(--line);
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: 14px 16px;
   margin-bottom: 8px;
   transition: border-color 0.15s ease;
 }
@@ -267,8 +270,8 @@ body {
 
 .check {
   flex-shrink: 0;
-  width: 20px;
-  height: 20px;
+  width: 23px;
+  height: 23px;
   border-radius: 50%;
   border: 1.5px solid var(--ink-faint);
   background: transparent;
@@ -300,7 +303,8 @@ body {
 }
 
 .task-title {
-  font-size: 14.5px;
+  font-size: 15.5px;
+  line-height: 1.4;
   color: var(--ink);
   overflow-wrap: break-word;
 }
@@ -314,13 +318,13 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 3px;
+  margin-top: 5px;
 }
 
 .task-time {
   font-family: "IBM Plex Mono", monospace;
-  font-size: 11px;
-  color: var(--ink-faint);
+  font-size: 12.5px;
+  color: var(--ink-soft);
 }
 
 .priority-dot {
@@ -379,7 +383,8 @@ body {
 
 .empty-state p {
   margin: 0;
-  font-size: 13.5px;
+  font-size: 14.5px;
+  line-height: 1.5;
 }
 
 .foot {
@@ -390,7 +395,7 @@ body {
   gap: 12px;
   text-align: center;
   font-family: "IBM Plex Mono", monospace;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-faint);
 }
 
@@ -399,8 +404,8 @@ body {
   background: transparent;
   color: var(--ink-soft);
   font-family: "IBM Plex Mono", monospace;
-  font-size: 11px;
-  padding: 4px 10px;
+  font-size: 12px;
+  padding: 5px 11px;
   border-radius: 6px;
   cursor: pointer;
 }
@@ -431,15 +436,15 @@ body {
 
 .auth-field {
   width: 100%;
-  padding: 10px 12px;
+  padding: 11px 12px;
   font-family: "Inter", sans-serif;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .auth-error {
   margin: 0;
   color: var(--rose);
-  font-size: 12.5px;
+  font-size: 13px;
 }
 
 .auth-submit {
@@ -453,7 +458,7 @@ body {
   margin-top: 12px;
   text-align: center;
   font-family: "Inter", sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -470,7 +475,7 @@ body {
   background: transparent;
   color: var(--sage);
   font-family: "Inter", sans-serif;
-  font-size: 12.5px;
+  font-size: 13.5px;
   cursor: pointer;
   text-align: center;
 }
@@ -480,7 +485,7 @@ body {
     padding: 40px 16px 72px;
   }
   .date-heading {
-    font-size: 26px;
+    font-size: 29px;
   }
   .task-form-row {
     gap: 6px;
