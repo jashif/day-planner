@@ -2,21 +2,18 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { todayISO } from "../utils/dates";
 import { useSpeechRecognition } from "../hooks/useSpeechRecognition";
-import { parseVoiceTask, toNewTaskInput } from "../ai/parseVoiceTask";
-import type { AiLimit } from "../hooks/useDailyAiLimit";
+import { cleanVoiceTranscript } from "../utils/voiceTranscript";
 import type { NewTaskInput, Priority } from "../types/task";
 
 interface ComposerProps {
   onAdd: (input: NewTaskInput) => Promise<void>;
-  aiLimit: AiLimit;
 }
 
-export const Composer = ({ onAdd, aiLimit }: ComposerProps) => {
+export const Composer = ({ onAdd }: ComposerProps) => {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(todayISO());
   const [time, setTime] = useState("");
   const [priority, setPriority] = useState<Priority>("medium");
-  const [isProcessing, setIsProcessing] = useState(false);
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const speech = useSpeechRecognition();
 
@@ -48,25 +45,8 @@ export const Composer = ({ onAdd, aiLimit }: ComposerProps) => {
       if (speech.error) setVoiceError(speech.error);
       return;
     }
-
-    setIsProcessing(true);
-    try {
-      const today = todayISO();
-      const parsed = await parseVoiceTask(transcript, today);
-      const input = toNewTaskInput(parsed, today);
-      setTitle(input.title);
-      setDate(input.date);
-      setTime(input.time);
-      setPriority(input.priority);
-      await aiLimit.recordUsage();
-    } catch {
-      setVoiceError("Couldn't understand that. Please try again or type it in.");
-    } finally {
-      setIsProcessing(false);
-    }
+    setTitle(cleanVoiceTranscript(transcript));
   };
-
-  const micDisabled = isProcessing || aiLimit.isLimitReached;
 
   return (
     <section className="composer">
@@ -86,16 +66,9 @@ export const Composer = ({ onAdd, aiLimit }: ComposerProps) => {
               type="button"
               className={`mic-btn ${speech.isListening ? "is-listening" : ""}`}
               onClick={handleMicClick}
-              disabled={micDisabled}
               aria-pressed={speech.isListening}
               aria-label={speech.isListening ? "Stop voice input" : "Add task by voice"}
-              title={
-                aiLimit.isLimitReached
-                  ? "Daily free AI limit reached"
-                  : speech.isListening
-                    ? "Stop voice input"
-                    : "Add task by voice"
-              }
+              title={speech.isListening ? "Stop voice input" : "Add task by voice"}
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <rect
@@ -117,10 +90,8 @@ export const Composer = ({ onAdd, aiLimit }: ComposerProps) => {
             </button>
           )}
         </div>
-        {(speech.isListening || isProcessing || voiceError) && (
-          <p className="voice-status">
-            {voiceError ? voiceError : speech.isListening ? "Listening…" : "Thinking…"}
-          </p>
+        {(speech.isListening || voiceError) && (
+          <p className="voice-status">{voiceError ? voiceError : "Listening…"}</p>
         )}
         <div className="task-form-row">
           <input
