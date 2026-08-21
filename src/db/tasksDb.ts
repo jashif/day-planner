@@ -34,6 +34,7 @@ export const subscribeToTasks = (
           priority: data.priority,
           done: data.done,
           createdAt: data.createdAt?.toMillis?.() ?? Date.now(),
+          subtasks: data.subtasks,
         } as Task;
       });
       onChange(tasks);
@@ -42,10 +43,7 @@ export const subscribeToTasks = (
   );
 };
 
-export const addTask = async (
-  uid: string,
-  input: NewTaskInput,
-): Promise<void> => {
+export const addTask = async (uid: string, input: NewTaskInput): Promise<void> => {
   await addDoc(tasksCollection(uid), {
     title: input.title.trim(),
     date: input.date,
