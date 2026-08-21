@@ -2,18 +2,23 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    />
-    <meta name="theme-color" content="#1f1e1b" />
-    <link rel="icon" href="/icon-192.png" />
+    <script>
+      // Applied before any stylesheet loads to avoid a light/dark flash on load.
+      (function () {
+        var stored = localStorage.getItem("theme");
+        if (stored === "light" || stored === "dark") {
+          document.documentElement.dataset.theme = stored;
+        }
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#faf9f6" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#17161a" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta
-      name="apple-mobile-web-app-status-bar-style"
-      content="black-translucent"
-    />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Day" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

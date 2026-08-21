@@ -21,6 +21,13 @@ Built with React 19, TypeScript, Vite, and Firebase (Auth + Firestore).
 - Daily free-tier limit of 5 AI breakdowns per user per day, enforced by
   Firestore security rules (not just client-side UI) via a `users/{uid}/usage/{day}`
   counter doc. Paid tier for more is planned but not yet built.
+- Light/dark theme via CSS custom properties, following the OS preference by
+  default with a manual toggle (persisted in `localStorage`) that overrides it.
+  Applied before first paint to avoid a flash of the wrong theme.
+- Accessibility: visible focus rings (`:focus-visible`), `aria-label`s on all
+  icon-only buttons, `prefers-reduced-motion` respected, and a WCAG-conscious
+  color palette (no color used as the only signal, sufficient text contrast
+  in both themes).
 
 ## Structure
 
@@ -44,6 +51,9 @@ src/
     TaskList.tsx           grouping + sorting + empty state
     TaskRow.tsx            single task row + AI breakdown panel
     EmptyState.tsx         empty state copy + icon
+    TopBar.tsx             account email, theme toggle, sign out
+    ThemeToggle.tsx        light/dark toggle button
+  hooks/useTheme.ts       theme state (system-aware, persisted override)
   App.tsx
   main.tsx
   index.css
