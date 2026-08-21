@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { formatTime } from "../utils/dates";
 import { breakdownTask } from "../ai/breakdownTask";
-import type { BreakdownLimit } from "../hooks/useDailyBreakdownLimit";
+import type { AiLimit } from "../hooks/useDailyAiLimit";
 import type { BreakdownDetail, Subtask, Task } from "../types/task";
 
 interface TaskRowProps {
@@ -10,7 +10,7 @@ interface TaskRowProps {
   onRemove: (id: string) => void;
   onSetSubtasks: (id: string, subtasks: Subtask[]) => Promise<void>;
   onToggleSubtask: (id: string, subtaskId: string) => Promise<void>;
-  breakdownLimit: BreakdownLimit;
+  aiLimit: AiLimit;
 }
 
 const DETAIL_OPTIONS: { value: BreakdownDetail; label: string }[] = [
@@ -28,7 +28,7 @@ export const TaskRow = ({
   onRemove,
   onSetSubtasks,
   onToggleSubtask,
-  breakdownLimit,
+  aiLimit,
 }: TaskRowProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [detail, setDetail] = useState<BreakdownDetail>("normal");
@@ -39,7 +39,7 @@ export const TaskRow = ({
   const doneCount = subtasks.filter((s) => s.done).length;
 
   const generate = async () => {
-    if (breakdownLimit.isLimitReached) return;
+    if (aiLimit.isLimitReached) return;
     setIsGenerating(true);
     setGenError(null);
     try {
@@ -54,7 +54,7 @@ export const TaskRow = ({
         done: false,
       }));
       await onSetSubtasks(task.id, next);
-      await breakdownLimit.recordUsage();
+      await aiLimit.recordUsage();
     } catch (err) {
       console.error("breakdownTask failed:", err);
       setGenError("Something went wrong breaking this down. Please try again.");
@@ -179,7 +179,7 @@ export const TaskRow = ({
                   className="breakdown-link"
                   type="button"
                   onClick={generate}
-                  disabled={isGenerating || breakdownLimit.isLimitReached}
+                  disabled={isGenerating || aiLimit.isLimitReached}
                 >
                   {isGenerating ? "Regenerating…" : "Regenerate"}
                 </button>
@@ -199,7 +199,7 @@ export const TaskRow = ({
                       type="button"
                       className={`detail-option ${detail === opt.value ? "is-active" : ""}`}
                       onClick={() => setDetail(opt.value)}
-                      disabled={breakdownLimit.isLimitReached}
+                      disabled={aiLimit.isLimitReached}
                     >
                       {opt.label}
                     </button>
@@ -209,21 +209,21 @@ export const TaskRow = ({
                   className="add-btn breakdown-generate"
                   type="button"
                   onClick={generate}
-                  disabled={isGenerating || breakdownLimit.isLimitReached}
+                  disabled={isGenerating || aiLimit.isLimitReached}
                 >
                   {isGenerating ? "Breaking it down…" : "Break it down"}
                 </button>
               </div>
             </>
           )}
-          {breakdownLimit.isLimitReached ? (
+          {aiLimit.isLimitReached ? (
             <p className="breakdown-limit is-reached">
-              Daily free limit reached ({breakdownLimit.limit}/{breakdownLimit.limit}). More coming
-              soon with a paid plan.
+              Daily free AI limit reached ({aiLimit.limit}/{aiLimit.limit}). More coming soon with a
+              paid plan.
             </p>
           ) : (
             <p className="breakdown-limit">
-              {breakdownLimit.remaining} of {breakdownLimit.limit} free breakdowns left today
+              {aiLimit.remaining} of {aiLimit.limit} free AI actions left today
             </p>
           )}
           {genError && <p className="breakdown-error">{genError}</p>}

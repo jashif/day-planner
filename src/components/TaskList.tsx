@@ -1,7 +1,7 @@
 import { EmptyState } from "./EmptyState";
 import { TaskRow } from "./TaskRow";
 import { formatGroupLabel, todayISO } from "../utils/dates";
-import type { BreakdownLimit } from "../hooks/useDailyBreakdownLimit";
+import type { AiLimit } from "../hooks/useDailyAiLimit";
 import type { Subtask, Task, View } from "../types/task";
 
 interface TaskListProps {
@@ -11,7 +11,7 @@ interface TaskListProps {
   onRemove: (id: string) => void;
   onSetSubtasks: (id: string, subtasks: Subtask[]) => Promise<void>;
   onToggleSubtask: (id: string, subtaskId: string) => Promise<void>;
-  breakdownLimit: BreakdownLimit;
+  aiLimit: AiLimit;
 }
 
 const filterTasksForView = (tasks: Task[], view: View): Task[] => {
@@ -46,7 +46,7 @@ export const TaskList = ({
   onRemove,
   onSetSubtasks,
   onToggleSubtask,
-  breakdownLimit,
+  aiLimit,
 }: TaskListProps) => {
   const filtered = sortTasks(filterTasksForView(tasks, view));
 
@@ -65,7 +65,7 @@ export const TaskList = ({
             onRemove={onRemove}
             onSetSubtasks={onSetSubtasks}
             onToggleSubtask={onToggleSubtask}
-            breakdownLimit={breakdownLimit}
+            aiLimit={aiLimit}
           />
         ))}
       </>
@@ -85,7 +85,7 @@ export const TaskList = ({
               onRemove={onRemove}
               onSetSubtasks={onSetSubtasks}
               onToggleSubtask={onToggleSubtask}
-              breakdownLimit={breakdownLimit}
+              aiLimit={aiLimit}
             />
           ))}
         </div>
