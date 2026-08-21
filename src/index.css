@@ -457,6 +457,13 @@ body {
   color: var(--paper);
 }
 
+.detail-option:disabled,
+.breakdown-generate:disabled,
+.breakdown-link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .breakdown-generate {
   margin-left: 0;
 }
@@ -480,6 +487,17 @@ body {
   margin: 0;
   color: var(--rose);
   font-size: 13px;
+}
+
+.breakdown-limit {
+  margin: 0;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  color: var(--ink-faint);
+}
+
+.breakdown-limit.is-reached {
+  color: var(--ochre);
 }
 
 .subtask-list {
