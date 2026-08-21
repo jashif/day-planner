@@ -1,50 +1,90 @@
-# Day
+# Day (React + TypeScript)
 
-A quiet, minimal day-to-day planner. Tasks live in your browser's IndexedDB — no
-account, no server, nothing to lose on refresh. Built as plain ES modules, no
-build step, so it deploys as-is.
+A quiet, minimal day-to-day planner that syncs your tasks across devices.
+
+Built with React 19, TypeScript, Vite, and Firebase (Auth + Firestore).
+
+## Stack
+
+- React function components + hooks (no classes)
+- TypeScript throughout, `strict` mode
+- Vite for dev/build
+- Firebase Authentication (email/password + Google) for accounts
+- Firestore for task storage, scoped per user at `users/{uid}/tasks`, with
+  offline persistence via `persistentLocalCache`
+
+## Structure
+
+```
+src/
+  types/task.ts          task, priority, and view types
+  db/tasksDb.ts          Firestore read/write/subscribe layer
+  firebase/config.ts     Firebase app/auth/Firestore init
+  firebase/AuthProvider.tsx  auth context (sign in/up, Google, sign out)
+  hooks/useTasks.ts      per-user realtime task subscription + mutations
+  utils/dates.ts         date formatting helpers
+  components/
+    AuthScreen.tsx        sign-in / sign-up screen
+    Header.tsx            date heading + today's summary
+    ProgressRing.tsx       animated completion ring
+    Composer.tsx           add-task form
+    Tabs.tsx               Today / Upcoming / All
+    TaskList.tsx           grouping + sorting + empty state
+    TaskRow.tsx            single task row
+    EmptyState.tsx         empty state copy + icon
+  App.tsx
+  main.tsx
+  index.css
+firestore.rules          security rules restricting each user to their own tasks
+firebase.json            Firebase CLI config (for deploying firestore.rules)
+```
 
 ## Run locally
 
-Any static server works, since browsers block `type="module"` on `file://`.
-
 ```bash
-npx serve .
-# or
-python3 -m http.server 5500
+npm install
+cp .env.example .env   # fill in your Firebase project's web config
+npm run dev
 ```
 
-Then open the printed local URL.
+## Build
+
+```bash
+npm run build   # outputs to dist/
+npm run preview # preview the production build locally
+```
+
+## Firebase setup
+
+1. Create a project at [console.firebase.google.com](https://console.firebase.google.com).
+2. Enable **Authentication → Email/Password** and **Google** sign-in providers.
+3. Enable **Firestore Database**.
+4. Deploy `firestore.rules` (Firebase Console → Firestore → Rules, or
+   `firebase deploy --only firestore:rules` with the Firebase CLI).
+5. Copy the web app config into `.env` (see `.env.example`), and add the same
+   `VITE_FIREBASE_*` variables to Netlify's site environment variables.
+6. Add your Netlify domain to **Authentication → Settings → Authorized
+   domains** so Google sign-in works in production.
 
 ## Deploy — GitHub + Netlify
 
-1. Push this folder to a new GitHub repo:
+1. Push to a new GitHub repo:
 
    ```bash
    git init
    git add .
-   git commit -m "Day planner"
+   git commit -m "Day planner (React + TS)"
    git branch -M main
    git remote add origin https://github.com/<you>/day-planner.git
    git push -u origin main
    ```
 
 2. In Netlify: **Add new site → Import an existing project → GitHub**, pick
-   the repo. Build settings are already read from `netlify.toml`:
-   - Build command: *(none)*
-   - Publish directory: `.`
+   the repo. `netlify.toml` already sets:
+   - Build command: `npm run build`
+   - Publish directory: `dist`
+   - Don't forget to set the `VITE_FIREBASE_*` environment variables in
+     Netlify's site settings.
 
-3. Deploy. That's it — no environment variables, no build step.
+3. Deploy. Every push to `main` redeploys automatically.
 
-Every push to `main` redeploys automatically.
-
-## Roadmap: syncing to Postgres
-
-The storage layer is isolated in `src/db.js`, so swapping it later is
-contained. The plan:
-
-- Keep IndexedDB as the offline-first source of truth.
-- Add a `sync.js` module that pushes/pulls deltas to a small API in front of
-  Postgres (a `tasks` table keyed by the same `id` used here, plus
-  `updated_at` for conflict resolution).
-- Queue local writes while offline and flush them when back online.

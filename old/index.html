@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Day — a quiet planner</title>
+<link rel="icon" href="data:," />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="page">
+
+  <header class="hero">
+    <div class="hero-left">
+      <p class="eyebrow">today is</p>
+      <h1 class="date-heading" id="dateHeading">—</h1>
+      <p class="sub" id="taskSummary">Loading…</p>
+    </div>
+    <div class="hero-right">
+      <svg class="ring" viewBox="0 0 120 120" width="88" height="88" aria-hidden="true">
+        <circle class="ring-track" cx="60" cy="60" r="52" />
+        <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="52" />
+      </svg>
+      <span class="ring-label" id="ringLabel">0%</span>
+    </div>
+  </header>
+
+  <section class="composer" id="composer">
+    <form id="taskForm" class="task-form">
+      <input
+        type="text"
+        id="titleInput"
+        class="title-input"
+        placeholder="Add something to do…"
+        autocomplete="off"
+        required
+      />
+      <div class="task-form-row">
+        <input type="date" id="dateInput" class="field date-field" />
+        <input type="time" id="timeInput" class="field time-field" />
+        <select id="priorityInput" class="field priority-field">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+        <button type="submit" class="add-btn">Add</button>
+      </div>
+    </form>
+  </section>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab is-active" data-view="today">Today</button>
+    <button class="tab" data-view="upcoming">Upcoming</button>
+    <button class="tab" data-view="all">All</button>
+  </nav>
+
+  <main class="list-wrap">
+    <div id="listContent"></div>
+  </main>
+
+  <footer class="foot">
+    <span id="storageNote">Stored locally in this browser</span>
+  </footer>
+
+</div>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
