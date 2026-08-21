@@ -18,9 +18,7 @@ const DETAIL_OPTIONS: { value: BreakdownDetail; label: string }[] = [
 ];
 
 const generateId = (): string =>
-  crypto.randomUUID
-    ? crypto.randomUUID()
-    : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
 export const TaskRow = ({
   task,
@@ -46,9 +44,14 @@ export const TaskRow = ({
         setGenError("Couldn't find any steps for that. Try rephrasing the task.");
         return;
       }
-      const next: Subtask[] = steps.map((title) => ({ id: generateId(), title, done: false }));
+      const next: Subtask[] = steps.map((title) => ({
+        id: generateId(),
+        title,
+        done: false,
+      }));
       await onSetSubtasks(task.id, next);
-    } catch {
+    } catch (err) {
+      console.error("breakdownTask failed:", err);
       setGenError("Something went wrong breaking this down. Please try again.");
     } finally {
       setIsGenerating(false);
@@ -90,9 +93,7 @@ export const TaskRow = ({
           <div className="task-title">{task.title}</div>
           <div className="task-meta">
             <span className={`priority-dot ${task.priority}`} />
-            {task.time && (
-              <span className="task-time">{formatTime(task.time)}</span>
-            )}
+            {task.time && <span className="task-time">{formatTime(task.time)}</span>}
             {subtasks.length > 0 && (
               <span className="task-time">
                 {doneCount}/{subtasks.length} steps
@@ -201,4 +202,3 @@ export const TaskRow = ({
     </div>
   );
 };
-

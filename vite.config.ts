@@ -12,8 +12,7 @@ export default defineConfig({
       manifest: {
         name: "Day — a quiet planner",
         short_name: "Day",
-        description:
-          "A quiet, minimal day-to-day planner that syncs across devices.",
+        description: "A quiet, minimal day-to-day planner that syncs across devices.",
         theme_color: "#1f1e1b",
         background_color: "#faf9f6",
         display: "standalone",
