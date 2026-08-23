@@ -101,6 +101,25 @@ export const TaskRow = ({
           <div className="task-meta">
             <span className={`priority-dot ${task.priority}`} />
             {task.time && <span className="task-time">{formatTime(task.time)}</span>}
+            {task.recurrence && task.recurrence !== "none" && (
+              <span className="recurrence-badge">
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path
+                    d="M9.5 4.5A3.5 3.5 0 1 0 10 7"
+                    stroke="currentColor"
+                    strokeWidth="1.2"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M9.5 2.5v2h-2"
+                    stroke="currentColor"
+                    strokeWidth="1.2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                {task.recurrence}
+              </span>
+            )}
             {subtasks.length > 0 && (
               <button
                 className={`steps-badge ${doneCount === subtasks.length ? "is-complete" : ""}`}

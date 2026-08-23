@@ -29,6 +29,9 @@ Built with React 19, TypeScript, Vite, and Firebase (Auth + Firestore).
   You still review/edit the title and set date/time/priority before adding.
   Falls back gracefully (button hidden) in browsers without speech
   recognition support (e.g. Firefox).
+- Recurring tasks with daily, weekly, and monthly schedules. Completing a
+  recurring task keeps the completed occurrence and creates the next one with
+  a clean subtask state.
 - Light/dark theme via CSS custom properties, following the OS preference by
   default with a manual toggle (persisted in `localStorage`) that overrides it.
   Applied before first paint to avoid a flash of the wrong theme.

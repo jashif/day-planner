@@ -4,6 +4,8 @@ export type View = "today" | "upcoming" | "all";
 
 export type BreakdownDetail = "quick" | "normal" | "thorough";
 
+export type Recurrence = "none" | "daily" | "weekly" | "monthly";
+
 export interface Subtask {
   id: string;
   title: string;
@@ -19,6 +21,7 @@ export interface Task {
   done: boolean;
   createdAt: number;
   subtasks?: Subtask[];
+  recurrence?: Recurrence;
 }
 
 export interface NewTaskInput {
@@ -26,4 +29,5 @@ export interface NewTaskInput {
   date: string;
   time: string;
   priority: Priority;
+  recurrence: Recurrence;
 }
