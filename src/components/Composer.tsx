@@ -3,7 +3,7 @@ import type { FormEvent } from "react";
 import { todayISO } from "../utils/dates";
 import { useSpeechRecognition } from "../hooks/useSpeechRecognition";
 import { cleanVoiceTranscript } from "../utils/voiceTranscript";
-import type { NewTaskInput, Priority } from "../types/task";
+import type { NewTaskInput, Priority, Recurrence } from "../types/task";
 
 interface ComposerProps {
   onAdd: (input: NewTaskInput) => Promise<void>;
@@ -14,6 +14,7 @@ export const Composer = ({ onAdd }: ComposerProps) => {
   const [date, setDate] = useState(todayISO());
   const [time, setTime] = useState("");
   const [priority, setPriority] = useState<Priority>("medium");
+  const [recurrence, setRecurrence] = useState<Recurrence>("none");
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const speech = useSpeechRecognition();
 
@@ -23,7 +24,7 @@ export const Composer = ({ onAdd }: ComposerProps) => {
     if (!trimmed) return;
 
     try {
-      await onAdd({ title: trimmed, date, time, priority });
+      await onAdd({ title: trimmed, date, time, priority, recurrence });
     } catch {
       return;
     }
@@ -31,6 +32,7 @@ export const Composer = ({ onAdd }: ComposerProps) => {
     setTitle("");
     setTime("");
     setPriority("medium");
+    setRecurrence("none");
     setDate(todayISO());
   };
 
@@ -114,6 +116,17 @@ export const Composer = ({ onAdd }: ComposerProps) => {
             <option value="low">Low</option>
             <option value="medium">Medium</option>
             <option value="high">High</option>
+          </select>
+          <select
+            className="field recurrence-field"
+            value={recurrence}
+            onChange={(e) => setRecurrence(e.target.value as Recurrence)}
+            aria-label="Repeat task"
+          >
+            <option value="none">Does not repeat</option>
+            <option value="daily">Every day</option>
+            <option value="weekly">Every week</option>
+            <option value="monthly">Every month</option>
           </select>
           <button type="submit" className="add-btn">
             Add

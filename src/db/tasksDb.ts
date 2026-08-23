@@ -35,6 +35,7 @@ export const subscribeToTasks = (
           done: data.done,
           createdAt: data.createdAt?.toMillis?.() ?? Date.now(),
           subtasks: data.subtasks,
+          recurrence: data.recurrence ?? "none",
         } as Task;
       });
       onChange(tasks);
@@ -51,6 +52,7 @@ export const addTask = async (uid: string, input: NewTaskInput): Promise<void> =
     priority: input.priority,
     done: false,
     createdAt: serverTimestamp(),
+    recurrence: input.recurrence,
   });
 };
 

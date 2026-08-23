@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { addTask, deleteTask, subscribeToTasks, updateTask } from "../db/tasksDb";
-import type { NewTaskInput, Subtask, Task } from "../types/task";
+import { nextOccurrenceISO } from "../utils/dates";
+import type { NewTaskInput, Recurrence, Subtask, Task } from "../types/task";
 
 export const useTasks = (uid: string) => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -43,6 +44,27 @@ export const useTasks = (uid: string) => {
       if (!task) return;
       try {
         await updateTask(uid, id, { done: !task.done });
+        if (!task.done && task.recurrence && task.recurrence !== "none") {
+          const nextDate = nextOccurrenceISO(
+            task.date,
+            task.recurrence as Exclude<Recurrence, "none">,
+          );
+          const nextExists = tasks.some(
+            (candidate) =>
+              candidate.title === task.title &&
+              candidate.date === nextDate &&
+              candidate.recurrence === task.recurrence,
+          );
+          if (!nextExists) {
+            await addTask(uid, {
+              title: task.title,
+              date: nextDate,
+              time: task.time ?? "",
+              priority: task.priority,
+              recurrence: task.recurrence,
+            });
+          }
+        }
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to update task");

@@ -7,6 +7,23 @@ export const toISODate = (d: Date): string => {
 
 export const todayISO = (): string => toISODate(new Date());
 
+export const nextOccurrenceISO = (
+  date: string,
+  recurrence: "daily" | "weekly" | "monthly",
+): string => {
+  const next = new Date(`${date}T12:00:00`);
+  if (recurrence === "daily") next.setDate(next.getDate() + 1);
+  if (recurrence === "weekly") next.setDate(next.getDate() + 7);
+  if (recurrence === "monthly") {
+    const day = next.getDate();
+    next.setDate(1);
+    next.setMonth(next.getMonth() + 1);
+    const lastDay = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
+    next.setDate(Math.min(day, lastDay));
+  }
+  return toISODate(next);
+};
+
 export const formatHeadingDate = (isoDate: string): string => {
   const [year, month, day] = isoDate.split("-").map(Number);
   const d = new Date(year, month - 1, day);
