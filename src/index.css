@@ -762,6 +762,46 @@ textarea {
   flex-shrink: 0;
 }
 
+.account-menu {
+  position: relative;
+}
+
+.account-menu-popover {
+  position: absolute;
+  z-index: 2;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 150px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper-raised);
+  box-shadow: var(--shadow);
+}
+
+.account-menu-item {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  padding: 9px 10px;
+  text-align: left;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.account-menu-item:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.account-menu-item.is-danger:hover {
+  color: var(--rose);
+}
+
 .sign-out-btn {
   border: 1px solid var(--line);
   background: transparent;
@@ -806,6 +846,79 @@ textarea {
   justify-content: center;
   min-height: 100vh;
   padding: 24px;
+}
+
+.account-dialog-backdrop {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: color-mix(in srgb, var(--ink) 35%, transparent);
+}
+
+.account-dialog {
+  width: min(100%, 380px);
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+  box-shadow: var(--shadow);
+}
+
+.account-dialog h2 {
+  margin: 0;
+  font-family: "Fraunces", serif;
+  font-size: 27px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.account-dialog > p:not(.eyebrow) {
+  margin: 10px 0 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.account-dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.account-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.dialog-cancel,
+.dialog-delete {
+  border-radius: 7px;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  padding: 9px 13px;
+  cursor: pointer;
+}
+
+.dialog-cancel {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-soft);
+}
+
+.dialog-delete {
+  border: 1px solid var(--rose);
+  background: var(--rose);
+  color: #fff;
+}
+
+.dialog-delete:hover {
+  opacity: 0.85;
 }
 
 .auth-card {

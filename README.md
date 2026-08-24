@@ -39,6 +39,10 @@ Built with React 19, TypeScript, Vite, and Firebase (Auth + Firestore).
   icon-only buttons, `prefers-reduced-motion` respected, and a WCAG-conscious
   color palette (no color used as the only signal, sufficient text contrast
   in both themes).
+- Account deletion is available from the Account menu. It reauthenticates the
+  user, deletes their Firestore tasks and usage records, then deletes the
+  Firebase Auth account. Email/password users must confirm their password;
+  Google users complete a Google reauthentication popup.
 
 ## Structure
 
