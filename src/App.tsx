@@ -11,18 +11,31 @@ import { useDailyAiLimit } from "./hooks/useDailyAiLimit";
 import { todayISO } from "./utils/dates";
 import type { View } from "./types/task";
 
-const PlannerApp = ({ uid, email }: { uid: string; email: string | null }) => {
+const PlannerApp = ({
+  uid,
+  email,
+  providerId,
+}: {
+  uid: string;
+  email: string | null;
+  providerId: string;
+}) => {
   const { tasks, error, createTask, toggleTask, removeTask, setSubtasks, toggleSubtask } =
     useTasks(uid);
   const aiLimit = useDailyAiLimit(uid);
   const [view, setView] = useState<View>("today");
-  const { logOut } = useAuth();
+  const { logOut, deleteAccount } = useAuth();
   const today = todayISO();
   const todaysTasks = tasks.filter((t) => t.date === today);
 
   return (
     <div className="page">
-      <TopBar email={email} onSignOut={logOut} />
+      <TopBar
+        email={email}
+        onSignOut={logOut}
+        onDeleteAccount={deleteAccount}
+        requiresPassword={providerId === "password"}
+      />
       <Header todaysTasks={todaysTasks} />
       {error && <p className="sync-error">Couldn&apos;t sync: {error}</p>}
       <Composer onAdd={createTask} />
@@ -48,7 +61,13 @@ const App = () => {
   if (isLoading) return null;
   if (!user) return <AuthScreen />;
 
-  return <PlannerApp uid={user.uid} email={user.email} />;
+  return (
+    <PlannerApp
+      uid={user.uid}
+      email={user.email}
+      providerId={user.providerData[0]?.providerId ?? ""}
+    />
+  );
 };
 
 export default App;

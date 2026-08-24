@@ -1,7 +1,11 @@
 import {
   GoogleAuthProvider,
+  EmailAuthProvider,
   createUserWithEmailAndPassword,
+  deleteUser,
   onAuthStateChanged,
+  reauthenticateWithCredential,
+  reauthenticateWithPopup,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -9,6 +13,7 @@ import {
 } from "firebase/auth";
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { auth } from "./config";
+import { deleteUserData } from "../db/userDb";
 
 interface AuthContextValue {
   user: User | null;
@@ -17,6 +22,7 @@ interface AuthContextValue {
   signIn: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   logOut: () => Promise<void>;
+  deleteAccount: (password?: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -48,6 +54,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       },
       logOut: async () => {
         await signOut(auth);
+      },
+      deleteAccount: async (password) => {
+        if (!auth.currentUser) return;
+
+        const providerId = auth.currentUser.providerData[0]?.providerId;
+        if (providerId === "password") {
+          if (!password || !auth.currentUser.email) {
+            throw new Error("Enter your password to delete your account.");
+          }
+          await reauthenticateWithCredential(
+            auth.currentUser,
+            EmailAuthProvider.credential(auth.currentUser.email, password),
+          );
+        } else if (providerId === "google.com") {
+          await reauthenticateWithPopup(auth.currentUser, new GoogleAuthProvider());
+        }
+
+        await deleteUserData(auth.currentUser.uid);
+        await deleteUser(auth.currentUser);
       },
     }),
     [user, isLoading],
