@@ -1,32 +1,74 @@
-import { formatGroupLabel, formatTime, todayISO } from "../utils/dates";
+import { formatTime } from "../utils/dates";
 import { useBreakdown } from "../hooks/useBreakdown";
 import { BreakdownPanel } from "./BreakdownPanel";
 import type { AiLimit } from "../hooks/useDailyAiLimit";
 import type { Subtask, Task } from "../types/task";
+import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 
-interface TaskRowProps {
+interface TimelineTaskCardProps {
   task: Task;
+  style?: CSSProperties;
+  compact?: boolean;
+  isDragging?: boolean;
   onToggle: (id: string) => void;
   onRemove: (id: string) => void;
   onSetSubtasks: (id: string, subtasks: Subtask[]) => Promise<void>;
   onToggleSubtask: (id: string, subtaskId: string) => Promise<void>;
   aiLimit: AiLimit;
+  onDragStart: (task: Task, clientY: number) => void;
 }
 
-export const TaskRow = ({
+/** A task card rendered either as a scheduled block on the timeline grid, or a static card in the backlog. */
+export const TimelineTaskCard = ({
   task,
+  style,
+  compact,
+  isDragging,
   onToggle,
   onRemove,
   onSetSubtasks,
   onToggleSubtask,
   aiLimit,
-}: TaskRowProps) => {
+  onDragStart,
+}: TimelineTaskCardProps) => {
   const breakdown = useBreakdown(task, onSetSubtasks, aiLimit);
   const { isOpen, setIsOpen, subtasks, doneCount } = breakdown;
 
+  // On touch, only the dedicated handle starts a drag so swiping the rest of the card still scrolls the page.
+  // On mouse/pen, the whole card (minus buttons) is grabbable since there's no scroll-gesture conflict.
+  const handlePointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest("button")) return;
+    if (e.pointerType === "touch" && !(e.target as HTMLElement).closest(".timeline-drag-handle"))
+      return;
+    onDragStart(task, e.clientY);
+  };
+
+  const handleHandlePointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    onDragStart(task, e.clientY);
+  };
+
   return (
-    <div className={`task-row ${task.done ? "is-done" : ""}`}>
-      <div className="task-row-main">
+    <div
+      className={`timeline-card ${task.done ? "is-done" : ""} ${isDragging ? "is-dragging" : ""} ${compact ? "is-compact" : ""} ${isOpen ? "is-expanded" : ""}`}
+      style={style}
+      onPointerDown={handlePointerDown}
+    >
+      <div className="timeline-card-main">
+        <div
+          className="timeline-drag-handle"
+          onPointerDown={handleHandlePointerDown}
+          aria-hidden="true"
+        >
+          <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
+            <circle cx="1.5" cy="1.5" r="1.5" fill="currentColor" />
+            <circle cx="6.5" cy="1.5" r="1.5" fill="currentColor" />
+            <circle cx="1.5" cy="7" r="1.5" fill="currentColor" />
+            <circle cx="6.5" cy="7" r="1.5" fill="currentColor" />
+            <circle cx="1.5" cy="12.5" r="1.5" fill="currentColor" />
+            <circle cx="6.5" cy="12.5" r="1.5" fill="currentColor" />
+          </svg>
+        </div>
         <button
           className={`check ${task.done ? "is-checked" : ""}`}
           role="checkbox"
@@ -44,46 +86,18 @@ export const TaskRow = ({
             />
           </svg>
         </button>
-        <div className="task-body">
+        <div className="timeline-card-body">
           <div className="task-title">{task.title}</div>
           <div className="task-meta">
             <span className={`priority-dot ${task.priority}`} />
-            {task.date !== todayISO() && (
-              <span className="date-badge">{formatGroupLabel(task.date)}</span>
-            )}
             {task.time && <span className="task-time">{formatTime(task.time)}</span>}
-            {task.recurrence && task.recurrence !== "none" && (
-              <span className="recurrence-badge">
-                <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                  <path
-                    d="M9.5 4.5A3.5 3.5 0 1 0 10 7"
-                    stroke="currentColor"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                  />
-                  <path
-                    d="M9.5 2.5v2h-2"
-                    stroke="currentColor"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                  />
-                </svg>
-                {task.recurrence}
-              </span>
-            )}
             {subtasks.length > 0 && (
               <button
                 className={`steps-badge ${doneCount === subtasks.length ? "is-complete" : ""}`}
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
               >
-                <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                  <rect x="0.5" y="0.5" width="4" height="4" rx="1" stroke="currentColor" />
-                  <path d="M1.3 2.5 1.9 3.1 3.2 1.7" stroke="currentColor" strokeLinecap="round" />
-                  <rect x="0.5" y="7.5" width="4" height="4" rx="1" stroke="currentColor" />
-                  <path d="M6.5 2h5.5M6.5 9.5h5.5" stroke="currentColor" strokeLinecap="round" />
-                </svg>
-                {doneCount}/{subtasks.length} steps
+                {doneCount}/{subtasks.length}
               </button>
             )}
           </div>
@@ -106,7 +120,6 @@ export const TaskRow = ({
           ×
         </button>
       </div>
-
       {isOpen && (
         <BreakdownPanel
           task={task}

@@ -5,24 +5,26 @@ interface TabsProps {
   onChange: (view: View) => void;
 }
 
-const TAB_OPTIONS: { view: View; label: string }[] = [
-  { view: "today", label: "Today" },
-  { view: "upcoming", label: "Upcoming" },
-  { view: "all", label: "All" },
+const OPTIONS: { view: View; label: string }[] = [
+  { view: "list", label: "List" },
+  { view: "timeline", label: "Timeline" },
 ];
 
+/** Small two-way switch between the default flat list and the optional single-day timeline. */
 export const Tabs = ({ activeView, onChange }: TabsProps) => {
   return (
-    <nav className="tabs">
-      {TAB_OPTIONS.map(({ view, label }) => (
+    <div className="view-toggle" role="tablist" aria-label="View">
+      {OPTIONS.map(({ view, label }) => (
         <button
           key={view}
-          className={`tab ${activeView === view ? "is-active" : ""}`}
+          role="tab"
+          aria-selected={activeView === view}
+          className={`view-toggle-option ${activeView === view ? "is-active" : ""}`}
           onClick={() => onChange(view)}
         >
           {label}
         </button>
       ))}
-    </nav>
+    </div>
   );
 };

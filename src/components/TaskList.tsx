@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { EmptyState } from "./EmptyState";
 import { TaskRow } from "./TaskRow";
-import { formatGroupLabel, todayISO } from "../utils/dates";
+import { DayTimeline } from "./DayTimeline";
+import { todayISO } from "../utils/dates";
 import type { AiLimit } from "../hooks/useDailyAiLimit";
 import type { Subtask, Task, View } from "../types/task";
 
@@ -11,15 +13,10 @@ interface TaskListProps {
   onRemove: (id: string) => void;
   onSetSubtasks: (id: string, subtasks: Subtask[]) => Promise<void>;
   onToggleSubtask: (id: string, subtaskId: string) => Promise<void>;
+  onReschedule: (id: string, time: string | null) => void;
+  onQuickAddAt: (time: string) => void;
   aiLimit: AiLimit;
 }
-
-const filterTasksForView = (tasks: Task[], view: View): Task[] => {
-  const today = todayISO();
-  if (view === "today") return tasks.filter((t) => t.date === today);
-  if (view === "upcoming") return tasks.filter((t) => t.date > today);
-  return tasks;
-};
 
 const sortTasks = (tasks: Task[]): Task[] =>
   [...tasks].sort((a, b) => {
@@ -29,16 +26,6 @@ const sortTasks = (tasks: Task[]): Task[] =>
     return a.createdAt - b.createdAt;
   });
 
-const groupByDate = (tasks: Task[]): [string, Task[]][] => {
-  const groups = new Map<string, Task[]>();
-  tasks.forEach((task) => {
-    const key = task.date;
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key)!.push(task);
-  });
-  return Array.from(groups.entries());
-};
-
 export const TaskList = ({
   tasks,
   view,
@@ -46,50 +33,84 @@ export const TaskList = ({
   onRemove,
   onSetSubtasks,
   onToggleSubtask,
+  onReschedule,
+  onQuickAddAt,
   aiLimit,
 }: TaskListProps) => {
-  const filtered = sortTasks(filterTasksForView(tasks, view));
+  const [showCompleted, setShowCompleted] = useState(false);
 
-  if (filtered.length === 0) {
-    return <EmptyState view={view} />;
-  }
-
-  if (view === "today") {
+  if (view === "timeline") {
+    const today = todayISO();
+    const todaysTasks = tasks.filter((t) => t.date === today);
+    if (todaysTasks.length === 0) return <EmptyState view={view} />;
     return (
-      <>
-        {filtered.map((task) => (
-          <TaskRow
-            key={task.id}
-            task={task}
-            onToggle={onToggle}
-            onRemove={onRemove}
-            onSetSubtasks={onSetSubtasks}
-            onToggleSubtask={onToggleSubtask}
-            aiLimit={aiLimit}
-          />
-        ))}
-      </>
+      <DayTimeline
+        tasks={todaysTasks}
+        onToggle={onToggle}
+        onRemove={onRemove}
+        onSetSubtasks={onSetSubtasks}
+        onToggleSubtask={onToggleSubtask}
+        onReschedule={onReschedule}
+        onQuickAddAt={onQuickAddAt}
+        aiLimit={aiLimit}
+      />
     );
   }
 
+  if (tasks.length === 0) {
+    return <EmptyState view={view} />;
+  }
+
+  const incomplete = sortTasks(tasks.filter((t) => !t.done));
+  const completed = sortTasks(tasks.filter((t) => t.done));
+
+  const row = (task: Task) => (
+    <TaskRow
+      key={task.id}
+      task={task}
+      onToggle={onToggle}
+      onRemove={onRemove}
+      onSetSubtasks={onSetSubtasks}
+      onToggleSubtask={onToggleSubtask}
+      aiLimit={aiLimit}
+    />
+  );
+
   return (
     <>
-      {groupByDate(filtered).map(([date, group]) => (
-        <div className="day-group" key={date}>
-          <p className="day-group-label">{formatGroupLabel(date)}</p>
-          {group.map((task) => (
-            <TaskRow
-              key={task.id}
-              task={task}
-              onToggle={onToggle}
-              onRemove={onRemove}
-              onSetSubtasks={onSetSubtasks}
-              onToggleSubtask={onToggleSubtask}
-              aiLimit={aiLimit}
-            />
-          ))}
+      {incomplete.length === 0 && completed.length > 0 ? (
+        <p className="all-done-hint">Nothing left to do — nice work.</p>
+      ) : (
+        incomplete.map(row)
+      )}
+      {completed.length > 0 && (
+        <div className="completed-section">
+          <button
+            className="completed-toggle"
+            type="button"
+            onClick={() => setShowCompleted(!showCompleted)}
+            aria-expanded={showCompleted}
+          >
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 10 10"
+              fill="none"
+              className={`completed-chevron ${showCompleted ? "is-open" : ""}`}
+              aria-hidden="true"
+            >
+              <path
+                d="M2 3.5 5 6.5 8 3.5"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+              />
+            </svg>
+            Completed ({completed.length})
+          </button>
+          {showCompleted && completed.map(row)}
         </div>
-      ))}
+      )}
     </>
   );
 };

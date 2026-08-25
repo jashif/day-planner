@@ -1,6 +1,6 @@
 export type Priority = "low" | "medium" | "high";
 
-export type View = "today" | "upcoming" | "all";
+export type View = "list" | "timeline";
 
 export type BreakdownDetail = "quick" | "normal" | "thorough";
 
