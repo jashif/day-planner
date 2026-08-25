@@ -5,9 +5,8 @@ interface EmptyStateProps {
 }
 
 const COPY: Record<View, string> = {
-  today: "Nothing planned for today — add your first task above.",
-  upcoming: "No upcoming tasks yet.",
-  all: "Your list is empty. Add something to get started.",
+  list: "Your list is empty. Add something to get started.",
+  timeline: "Nothing scheduled for today — add a task with a time above.",
 };
 
 export const EmptyState = ({ view }: EmptyStateProps) => {

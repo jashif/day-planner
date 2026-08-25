@@ -20,10 +20,19 @@ const PlannerApp = ({
   email: string | null;
   providerId: string;
 }) => {
-  const { tasks, error, createTask, toggleTask, removeTask, setSubtasks, toggleSubtask } =
-    useTasks(uid);
+  const {
+    tasks,
+    error,
+    createTask,
+    toggleTask,
+    removeTask,
+    setSubtasks,
+    toggleSubtask,
+    rescheduleTask,
+  } = useTasks(uid);
   const aiLimit = useDailyAiLimit(uid);
-  const [view, setView] = useState<View>("today");
+  const [view, setView] = useState<View>("list");
+  const [presetTime, setPresetTime] = useState<string | null>(null);
   const { logOut, deleteAccount } = useAuth();
   const today = todayISO();
   const todaysTasks = tasks.filter((t) => t.date === today);
@@ -38,7 +47,11 @@ const PlannerApp = ({
       />
       <Header todaysTasks={todaysTasks} />
       {error && <p className="sync-error">Couldn&apos;t sync: {error}</p>}
-      <Composer onAdd={createTask} />
+      <Composer
+        onAdd={createTask}
+        presetTime={presetTime}
+        onConsumePreset={() => setPresetTime(null)}
+      />
       <Tabs activeView={view} onChange={setView} />
       <main className="list-wrap">
         <TaskList
@@ -48,6 +61,8 @@ const PlannerApp = ({
           onRemove={removeTask}
           onSetSubtasks={setSubtasks}
           onToggleSubtask={toggleSubtask}
+          onReschedule={rescheduleTask}
+          onQuickAddAt={setPresetTime}
           aiLimit={aiLimit}
         />
       </main>

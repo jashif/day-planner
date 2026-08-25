@@ -98,6 +98,18 @@ export const useTasks = (uid: string) => {
     [uid],
   );
 
+  const rescheduleTask = useCallback(
+    async (id: string, time: string | null) => {
+      try {
+        await updateTask(uid, id, { time });
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to reschedule task");
+      }
+    },
+    [uid],
+  );
+
   const toggleSubtask = useCallback(
     async (id: string, subtaskId: string) => {
       const task = tasks.find((t) => t.id === id);
@@ -122,5 +134,6 @@ export const useTasks = (uid: string) => {
     removeTask,
     setSubtasks,
     toggleSubtask,
+    rescheduleTask,
   };
 };
