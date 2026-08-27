@@ -7,11 +7,12 @@ import type { NewTaskInput, Priority, Recurrence } from "../types/task";
 
 interface ComposerProps {
   onAdd: (input: NewTaskInput) => Promise<void>;
+  section: string;
   presetTime?: string | null;
   onConsumePreset?: () => void;
 }
 
-export const Composer = ({ onAdd, presetTime, onConsumePreset }: ComposerProps) => {
+export const Composer = ({ onAdd, section, presetTime, onConsumePreset }: ComposerProps) => {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(todayISO());
   const [time, setTime] = useState("");
@@ -39,7 +40,7 @@ export const Composer = ({ onAdd, presetTime, onConsumePreset }: ComposerProps) 
     if (!trimmed) return;
 
     try {
-      await onAdd({ title: trimmed, date, time, priority, recurrence });
+      await onAdd({ title: trimmed, date, time, priority, recurrence, section });
     } catch {
       return;
     }

@@ -22,6 +22,7 @@ export interface Task {
   createdAt: number;
   subtasks?: Subtask[];
   recurrence?: Recurrence;
+  section?: string;
 }
 
 export interface NewTaskInput {
@@ -30,4 +31,5 @@ export interface NewTaskInput {
   time: string;
   priority: Priority;
   recurrence: Recurrence;
+  section?: string;
 }

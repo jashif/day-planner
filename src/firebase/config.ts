@@ -23,9 +23,10 @@ export const app = initializeApp(firebaseConfig);
 if (import.meta.env.DEV) {
   // In dev, use a debug token instead of real reCAPTCHA (register it once in
   // Firebase Console → App Check → Manage debug tokens).
+  const debugToken = import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN;
   (
     self as typeof self & { FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean | string }
-  ).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+  ).FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken || true;
 }
 
 const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
