@@ -62,6 +62,7 @@ export const useTasks = (uid: string) => {
               time: task.time ?? "",
               priority: task.priority,
               recurrence: task.recurrence,
+              section: task.section,
             });
           }
         }

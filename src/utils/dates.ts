@@ -7,6 +7,13 @@ export const toISODate = (d: Date): string => {
 
 export const todayISO = (): string => toISODate(new Date());
 
+/** Next date (today included) landing on the given weekday, 0 = Sunday … 6 = Saturday. */
+export const nextDateForWeekdayISO = (weekday: number, from: Date = new Date()): string => {
+  const next = new Date(from);
+  next.setDate(next.getDate() + ((weekday - next.getDay() + 7) % 7));
+  return toISODate(next);
+};
+
 export const nextOccurrenceISO = (
   date: string,
   recurrence: "daily" | "weekly" | "monthly",

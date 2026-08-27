@@ -7,9 +7,16 @@ interface TopBarProps {
   onSignOut: () => void;
   requiresPassword: boolean;
   onDeleteAccount: (password?: string) => Promise<void>;
+  onSetUpRoutine: () => void;
 }
 
-export const TopBar = ({ email, onSignOut, requiresPassword, onDeleteAccount }: TopBarProps) => {
+export const TopBar = ({
+  email,
+  onSignOut,
+  requiresPassword,
+  onDeleteAccount,
+  onSetUpRoutine,
+}: TopBarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -31,6 +38,9 @@ export const TopBar = ({ email, onSignOut, requiresPassword, onDeleteAccount }: 
       <span className="topbar-email">{email}</span>
       <div className="topbar-actions">
         <ThemeToggle />
+        <button className="routine-btn" type="button" onClick={onSetUpRoutine}>
+          Set up routine
+        </button>
         <div className="account-menu">
           <button
             className="sign-out-btn"
@@ -42,6 +52,16 @@ export const TopBar = ({ email, onSignOut, requiresPassword, onDeleteAccount }: 
           </button>
           {isMenuOpen && (
             <div className="account-menu-popover">
+              <button
+                className="account-menu-item"
+                type="button"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  onSetUpRoutine();
+                }}
+              >
+                Set up my routine
+              </button>
               <button className="account-menu-item" type="button" onClick={onSignOut}>
                 Sign out
               </button>
