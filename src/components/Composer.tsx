@@ -3,21 +3,32 @@ import type { FormEvent } from "react";
 import { todayISO } from "../utils/dates";
 import { useSpeechRecognition } from "../hooks/useSpeechRecognition";
 import { cleanVoiceTranscript } from "../utils/voiceTranscript";
+import type { Friend } from "../hooks/useFriends";
 import type { NewTaskInput, Priority, Recurrence } from "../types/task";
 
 interface ComposerProps {
   onAdd: (input: NewTaskInput) => Promise<void>;
   section: string;
+  friends: Friend[];
+  myDisplayName: string;
   presetTime?: string | null;
   onConsumePreset?: () => void;
 }
 
-export const Composer = ({ onAdd, section, presetTime, onConsumePreset }: ComposerProps) => {
+export const Composer = ({
+  onAdd,
+  section,
+  friends,
+  myDisplayName,
+  presetTime,
+  onConsumePreset,
+}: ComposerProps) => {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(todayISO());
   const [time, setTime] = useState("");
   const [priority, setPriority] = useState<Priority>("medium");
   const [recurrence, setRecurrence] = useState<Recurrence>("none");
+  const [sharedWithUid, setSharedWithUid] = useState("");
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const [showMore, setShowMore] = useState(false);
   const speech = useSpeechRecognition();
@@ -40,7 +51,18 @@ export const Composer = ({ onAdd, section, presetTime, onConsumePreset }: Compos
     if (!trimmed) return;
 
     try {
-      await onAdd({ title: trimmed, date, time, priority, recurrence, section });
+      const friend = friends.find((f) => f.uid === sharedWithUid);
+      await onAdd({
+        title: trimmed,
+        date,
+        time,
+        priority,
+        recurrence,
+        section,
+        sharedWithUid: friend?.uid ?? null,
+        sharedWithName: friend?.displayName ?? null,
+        sharedByName: friend ? myDisplayName : null,
+      });
     } catch {
       return;
     }
@@ -49,6 +71,7 @@ export const Composer = ({ onAdd, section, presetTime, onConsumePreset }: Compos
     setTime("");
     setPriority("medium");
     setRecurrence("none");
+    setSharedWithUid("");
     setDate(todayISO());
     titleInputRef.current?.focus();
   };
@@ -170,6 +193,21 @@ export const Composer = ({ onAdd, section, presetTime, onConsumePreset }: Compos
               <option value="weekly">Every week</option>
               <option value="monthly">Every month</option>
             </select>
+            {friends.length > 0 && (
+              <select
+                className="field share-field"
+                value={sharedWithUid}
+                onChange={(e) => setSharedWithUid(e.target.value)}
+                aria-label="Share with a friend"
+              >
+                <option value="">Just me</option>
+                {friends.map((friend) => (
+                  <option key={friend.uid} value={friend.uid}>
+                    Share with {friend.displayName}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
         )}
       </form>

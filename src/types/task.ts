@@ -23,6 +23,16 @@ export interface Task {
   subtasks?: Subtask[];
   recurrence?: Recurrence;
   section?: string;
+  sharedWithUid?: string | null;
+  sharedWithName?: string | null;
+  sharedByName?: string | null;
+  completedByUid?: string | null;
+  completedByName?: string | null;
+}
+
+/** A task owned by someone else and shared with the signed-in user. */
+export interface AssignedTask extends Task {
+  ownerUid: string;
 }
 
 export interface NewTaskInput {
@@ -32,4 +42,7 @@ export interface NewTaskInput {
   priority: Priority;
   recurrence: Recurrence;
   section?: string;
+  sharedWithUid?: string | null;
+  sharedWithName?: string | null;
+  sharedByName?: string | null;
 }

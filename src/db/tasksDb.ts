@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  collectionGroup,
   deleteDoc,
   doc,
   getDocs,
@@ -9,11 +10,12 @@ import {
   query,
   serverTimestamp,
   updateDoc,
+  where,
   writeBatch,
   type Unsubscribe,
 } from "firebase/firestore";
 import { db } from "../firebase/config";
-import type { NewTaskInput, Task } from "../types/task";
+import type { AssignedTask, NewTaskInput, Task } from "../types/task";
 
 const tasksCollection = (uid: string) => collection(db, "users", uid, "tasks");
 
@@ -39,6 +41,11 @@ export const subscribeToTasks = (
           subtasks: data.subtasks,
           recurrence: data.recurrence ?? "none",
           section: data.section ?? "Home",
+          sharedWithUid: data.sharedWithUid ?? null,
+          sharedWithName: data.sharedWithName ?? null,
+          sharedByName: data.sharedByName ?? null,
+          completedByUid: data.completedByUid ?? null,
+          completedByName: data.completedByName ?? null,
         } as Task;
       });
       onChange(tasks);
@@ -57,6 +64,11 @@ export const addTask = async (uid: string, input: NewTaskInput): Promise<void> =
     createdAt: serverTimestamp(),
     recurrence: input.recurrence,
     section: input.section ?? "Home",
+    sharedWithUid: input.sharedWithUid ?? null,
+    sharedWithName: input.sharedWithName ?? null,
+    sharedByName: input.sharedByName ?? null,
+    completedByUid: null,
+    completedByName: null,
   });
 };
 
@@ -107,4 +119,54 @@ export const updateTask = async (
 
 export const deleteTask = async (uid: string, id: string): Promise<void> => {
   await deleteDoc(doc(tasksCollection(uid), id));
+};
+
+/** Tasks other people have shared with the signed-in user, across everyone's task lists. */
+export const subscribeToAssignedTasks = (
+  uid: string,
+  onChange: (tasks: AssignedTask[]) => void,
+  onError?: (error: Error) => void,
+): Unsubscribe => {
+  const q = query(collectionGroup(db, "tasks"), where("sharedWithUid", "==", uid));
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const tasks = snapshot.docs.map((docSnap) => {
+        const data = docSnap.data();
+        return {
+          id: docSnap.id,
+          ownerUid: docSnap.ref.parent.parent!.id,
+          title: data.title,
+          date: data.date,
+          time: data.time,
+          priority: data.priority,
+          done: data.done,
+          createdAt: data.createdAt?.toMillis?.() ?? Date.now(),
+          subtasks: data.subtasks,
+          recurrence: data.recurrence ?? "none",
+          section: data.section ?? "Home",
+          sharedWithUid: data.sharedWithUid ?? null,
+          sharedWithName: data.sharedWithName ?? null,
+          sharedByName: data.sharedByName ?? null,
+          completedByUid: data.completedByUid ?? null,
+          completedByName: data.completedByName ?? null,
+        } as AssignedTask;
+      });
+      onChange(tasks);
+    },
+    onError,
+  );
+};
+
+export const completeAssignedTask = async (
+  ownerUid: string,
+  taskId: string,
+  completerUid: string,
+  completerName: string,
+): Promise<void> => {
+  await updateDoc(doc(tasksCollection(ownerUid), taskId), {
+    done: true,
+    completedByUid: completerUid,
+    completedByName: completerName,
+  });
 };
