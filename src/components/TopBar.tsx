@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { ThemeToggle } from "./ThemeToggle";
-import { DeleteAccountDialog } from "./DeleteAccountDialog";
+
+const DeleteAccountDialog = lazy(() =>
+  import("./DeleteAccountDialog").then((m) => ({ default: m.DeleteAccountDialog })),
+);
 
 interface TopBarProps {
   email: string | null;
@@ -81,15 +84,17 @@ export const TopBar = ({
         </div>
       </div>
       {isDeleteOpen && (
-        <DeleteAccountDialog
-          requiresPassword={requiresPassword}
-          isDeleting={isDeleting}
-          error={deleteError}
-          onClose={() => {
-            if (!isDeleting) setIsDeleteOpen(false);
-          }}
-          onConfirm={handleDelete}
-        />
+        <Suspense fallback={null}>
+          <DeleteAccountDialog
+            requiresPassword={requiresPassword}
+            isDeleting={isDeleting}
+            error={deleteError}
+            onClose={() => {
+              if (!isDeleting) setIsDeleteOpen(false);
+            }}
+            onConfirm={handleDelete}
+          />
+        </Suspense>
       )}
     </div>
   );
