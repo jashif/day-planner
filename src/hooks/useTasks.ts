@@ -3,7 +3,7 @@ import { addTask, deleteTask, subscribeToTasks, updateTask } from "../db/tasksDb
 import { nextOccurrenceISO } from "../utils/dates";
 import type { NewTaskInput, Recurrence, Subtask, Task } from "../types/task";
 
-export const useTasks = (uid: string) => {
+export const useTasks = (uid: string, onPoint?: () => void) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,6 +44,7 @@ export const useTasks = (uid: string) => {
       if (!task) return;
       try {
         await updateTask(uid, id, { done: !task.done });
+        if (!task.done) onPoint?.();
         if (!task.done && task.recurrence && task.recurrence !== "none") {
           const nextDate = nextOccurrenceISO(
             task.date,
@@ -71,7 +72,7 @@ export const useTasks = (uid: string) => {
         setError(err instanceof Error ? err.message : "Failed to update task");
       }
     },
-    [uid, tasks],
+    [uid, tasks, onPoint],
   );
 
   const removeTask = useCallback(

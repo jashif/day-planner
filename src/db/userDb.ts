@@ -9,8 +9,15 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { db } from "../firebase/config";
+import { toISODate, todayISO } from "../utils/dates";
 
 export const DEFAULT_SECTIONS = ["Home", "Work", "Daily"];
+
+export interface Streak {
+  currentStreak: number;
+  longestStreak: number;
+  lastActiveDate: string | null;
+}
 
 export const getSections = async (uid: string): Promise<string[]> => {
   const snap = await getDoc(doc(db, "users", uid));
@@ -22,6 +29,60 @@ export const getSections = async (uid: string): Promise<string[]> => {
 
 export const saveSections = async (uid: string, sections: string[]): Promise<void> => {
   await setDoc(doc(db, "users", uid), { sections }, { merge: true });
+};
+
+export const getStreak = async (uid: string): Promise<Streak> => {
+  const snap = await getDoc(doc(db, "users", uid));
+  const data = snap.data();
+  return {
+    currentStreak: data?.currentStreak ?? 0,
+    longestStreak: data?.longestStreak ?? 0,
+    lastActiveDate: data?.lastActiveDate ?? null,
+  };
+};
+
+/** Called once a day, the first time the user completes a task; keeps the streak in sync. */
+export const recordStreakActivity = async (uid: string): Promise<Streak> => {
+  const ref = doc(db, "users", uid);
+  const snap = await getDoc(ref);
+  const data = snap.data();
+  const today = todayISO();
+  const lastActiveDate: string | null = data?.lastActiveDate ?? null;
+
+  if (lastActiveDate === today) {
+    return {
+      currentStreak: data?.currentStreak ?? 1,
+      longestStreak: data?.longestStreak ?? 1,
+      lastActiveDate: today,
+    };
+  }
+
+  const yesterday = toISODate(new Date(Date.now() - 86_400_000));
+  const currentStreak = lastActiveDate === yesterday ? (data?.currentStreak ?? 0) + 1 : 1;
+  const longestStreak = Math.max(currentStreak, data?.longestStreak ?? 0);
+  const next = { currentStreak, longestStreak, lastActiveDate: today };
+  await setDoc(ref, next, { merge: true });
+  return next;
+};
+
+/** Local, foreground-only reminder opt-in. Reserved `partnerUid` slot is for the upcoming pairing feature. */
+export const getReminderEnabled = async (uid: string): Promise<boolean> => {
+  const snap = await getDoc(doc(db, "users", uid));
+  return Boolean(snap.data()?.reminderEnabled);
+};
+
+export const setReminderEnabled = async (uid: string, enabled: boolean): Promise<void> => {
+  await setDoc(doc(db, "users", uid), { reminderEnabled: enabled }, { merge: true });
+};
+
+/** True once we've asked (regardless of answer) so the first-login prompt only shows once. */
+export const getReminderPromptSeen = async (uid: string): Promise<boolean> => {
+  const snap = await getDoc(doc(db, "users", uid));
+  return Boolean(snap.data()?.reminderPromptSeen);
+};
+
+export const setReminderPromptSeen = async (uid: string): Promise<void> => {
+  await setDoc(doc(db, "users", uid), { reminderPromptSeen: true }, { merge: true });
 };
 
 /** True once the user has finished (or skipped) the routine-setup flow. */

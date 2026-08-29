@@ -167,6 +167,26 @@ textarea {
   letter-spacing: -0.01em;
 }
 
+.date-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ochre) 14%, transparent);
+  color: var(--ochre);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 13px;
+  font-weight: 500;
+}
+
 .sub {
   margin: 10px 0 0;
   color: var(--ink-soft);
@@ -227,6 +247,60 @@ textarea {
   background: color-mix(in srgb, var(--rose) 10%, transparent);
   color: var(--rose);
   font-size: 13px;
+}
+
+.reminder-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  border: 1px solid var(--sage);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--sage) 8%, transparent);
+}
+
+.reminder-prompt-text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.reminder-prompt-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.reminder-prompt-dismiss {
+  border: none;
+  background: transparent;
+  color: var(--ink-faint);
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.reminder-prompt-dismiss:hover {
+  color: var(--ink-soft);
+}
+
+.reminder-prompt-enable {
+  border: 1px solid var(--sage);
+  background: var(--sage);
+  color: #fff;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  padding: 8px 13px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.reminder-prompt-enable:hover {
+  opacity: 0.9;
 }
 
 .task-form {
@@ -688,6 +762,35 @@ textarea {
   font-family: "IBM Plex Mono", monospace;
   font-size: 11px;
   text-transform: capitalize;
+}
+
+.shared-badge {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  color: var(--ochre);
+}
+
+.shared-badge.is-done {
+  color: var(--sage);
+}
+
+.assigned-tasks {
+  margin-bottom: 24px;
+}
+
+.assigned-tasks-heading {
+  margin: 0 0 8px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.assigned-tasks-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .priority-dot {
@@ -1545,6 +1648,54 @@ textarea {
 
 .dialog-delete:hover {
   opacity: 0.85;
+}
+
+.friends-invite-btn {
+  margin-top: 18px;
+  width: 100%;
+}
+
+.friends-invite-link {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  word-break: break-all;
+}
+
+.friends-list {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.friends-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.friends-points {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  color: var(--ochre);
+}
+
+.friends-empty {
+  color: var(--ink-faint);
+  font-size: 13.5px;
+  padding: 4px 0;
 }
 
 .auth-card {

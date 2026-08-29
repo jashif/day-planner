@@ -71,6 +71,12 @@ export const TaskRow = ({
                 {task.recurrence}
               </span>
             )}
+            {task.sharedWithName && (
+              <span className="shared-badge">shared with {task.sharedWithName}</span>
+            )}
+            {task.done && task.completedByName && (
+              <span className="shared-badge is-done">done by {task.completedByName}</span>
+            )}
             {subtasks.length > 0 && (
               <button
                 className={`steps-badge ${doneCount === subtasks.length ? "is-complete" : ""}`}
