@@ -5,8 +5,8 @@ import {
   persistentLocalCache,
   persistentSingleTabManager,
 } from "firebase/firestore";
-import { getAI, GoogleAIBackend } from "firebase/ai";
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+import type { AI } from "firebase/ai";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -48,5 +48,15 @@ export const db = initializeFirestore(app, {
   }),
 });
 
+let aiPromise: Promise<AI> | null = null;
+
 // Gemini Developer API backend — free tier, key never leaves Firebase's proxy.
-export const ai = getAI(app, { backend: new GoogleAIBackend() });
+// Dynamically imported so the SDK is only downloaded when an AI feature actually runs.
+export const getAiInstance = (): Promise<AI> => {
+  if (!aiPromise) {
+    aiPromise = import("firebase/ai").then(({ getAI, GoogleAIBackend }) =>
+      getAI(app, { backend: new GoogleAIBackend() }),
+    );
+  }
+  return aiPromise;
+};

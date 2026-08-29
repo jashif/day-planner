@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { EmptyState } from "./EmptyState";
 import { TaskRow } from "./TaskRow";
-import { DayTimeline } from "./DayTimeline";
 import { todayISO } from "../utils/dates";
 import type { AiLimit } from "../hooks/useDailyAiLimit";
 import type { Subtask, Task, View } from "../types/task";
+
+const DayTimeline = lazy(() => import("./DayTimeline").then((m) => ({ default: m.DayTimeline })));
 
 interface TaskListProps {
   tasks: Task[];
@@ -44,16 +45,18 @@ export const TaskList = ({
     const todaysTasks = tasks.filter((t) => t.date === today);
     if (todaysTasks.length === 0) return <EmptyState view={view} />;
     return (
-      <DayTimeline
-        tasks={todaysTasks}
-        onToggle={onToggle}
-        onRemove={onRemove}
-        onSetSubtasks={onSetSubtasks}
-        onToggleSubtask={onToggleSubtask}
-        onReschedule={onReschedule}
-        onQuickAddAt={onQuickAddAt}
-        aiLimit={aiLimit}
-      />
+      <Suspense fallback={null}>
+        <DayTimeline
+          tasks={todaysTasks}
+          onToggle={onToggle}
+          onRemove={onRemove}
+          onSetSubtasks={onSetSubtasks}
+          onToggleSubtask={onToggleSubtask}
+          onReschedule={onReschedule}
+          onQuickAddAt={onQuickAddAt}
+          aiLimit={aiLimit}
+        />
+      </Suspense>
     );
   }
 

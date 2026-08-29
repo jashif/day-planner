@@ -1,55 +1,68 @@
-import { getGenerativeModel, Schema } from "firebase/ai";
-import { ai } from "../firebase/config";
+import { getAiInstance } from "../firebase/config";
 import type { Priority } from "../types/task";
 import type { RoutineRecurrence, RoutineSuggestion } from "../types/routine";
 
 const MAX_SUGGESTIONS = 20;
 
-const routineSchema = Schema.object({
-  properties: {
-    routines: Schema.array({
-      items: Schema.object({
-        properties: {
-          title: Schema.string({
-            description:
-              "Short name for the recurring activity, e.g. 'Morning run' or 'Team standup'. No times inside the title.",
-          }),
-          time: Schema.string({
-            description:
-              "Start time in 24-hour HH:MM format, or an empty string if no time was mentioned.",
-          }),
-          recurrence: Schema.string({
-            description: "Exactly one of: daily, weekly, monthly.",
-          }),
-          weekday: Schema.string({
-            description:
-              "For weekly items, the English day name (monday through sunday). Empty string otherwise.",
-          }),
-          priority: Schema.string({
-            description: "Exactly one of: low, medium, high.",
-          }),
-        },
-      }),
-    }),
-  },
-});
+let modelPromise: ReturnType<typeof buildModel> | null = null;
 
-const model = getGenerativeModel(ai, {
-  model: "gemini-3.6-flash",
-  generationConfig: {
-    responseMimeType: "application/json",
-    responseSchema: routineSchema,
-  },
-  systemInstruction:
-    "You turn a free-form description of someone's daily life into a set of recurring tasks for their planner. " +
-    "Only include activities that genuinely repeat (daily, weekly, or monthly). " +
-    "Ignore one-off events, past events, and vague feelings. " +
-    "If the person gives a time or a rough time of day, convert it to a 24-hour HH:MM start time " +
-    "(morning ~08:00, noon ~12:00, afternoon ~14:00, evening ~18:00, night ~21:00); otherwise leave time empty. " +
-    "Use the person's own wording for titles where possible, but keep them short and start with a verb or noun phrase. " +
-    "Set priority to high only for things they describe as important or non-negotiable. " +
-    "Never invent activities they did not mention. Respond only with the requested JSON.",
-});
+const buildModel = async () => {
+  const [{ getGenerativeModel, Schema }, ai] = await Promise.all([
+    import("firebase/ai"),
+    getAiInstance(),
+  ]);
+
+  const routineSchema = Schema.object({
+    properties: {
+      routines: Schema.array({
+        items: Schema.object({
+          properties: {
+            title: Schema.string({
+              description:
+                "Short name for the recurring activity, e.g. 'Morning run' or 'Team standup'. No times inside the title.",
+            }),
+            time: Schema.string({
+              description:
+                "Start time in 24-hour HH:MM format, or an empty string if no time was mentioned.",
+            }),
+            recurrence: Schema.string({
+              description: "Exactly one of: daily, weekly, monthly.",
+            }),
+            weekday: Schema.string({
+              description:
+                "For weekly items, the English day name (monday through sunday). Empty string otherwise.",
+            }),
+            priority: Schema.string({
+              description: "Exactly one of: low, medium, high.",
+            }),
+          },
+        }),
+      }),
+    },
+  });
+
+  return getGenerativeModel(ai, {
+    model: "gemini-3.6-flash",
+    generationConfig: {
+      responseMimeType: "application/json",
+      responseSchema: routineSchema,
+    },
+    systemInstruction:
+      "You turn a free-form description of someone's daily life into a set of recurring tasks for their planner. " +
+      "Only include activities that genuinely repeat (daily, weekly, or monthly). " +
+      "Ignore one-off events, past events, and vague feelings. " +
+      "If the person gives a time or a rough time of day, convert it to a 24-hour HH:MM start time " +
+      "(morning ~08:00, noon ~12:00, afternoon ~14:00, evening ~18:00, night ~21:00); otherwise leave time empty. " +
+      "Use the person's own wording for titles where possible, but keep them short and start with a verb or noun phrase. " +
+      "Set priority to high only for things they describe as important or non-negotiable. " +
+      "Never invent activities they did not mention. Respond only with the requested JSON.",
+  });
+};
+
+const getModel = () => {
+  if (!modelPromise) modelPromise = buildModel();
+  return modelPromise;
+};
 
 const WEEKDAYS: Record<string, number> = {
   sunday: 0,
@@ -120,6 +133,7 @@ export const generateRoutine = async (description: string): Promise<RoutineSugge
   const prompt =
     `Here is how this person describes their daily life:\n\n"""${description.trim()}"""\n\n` +
     "Extract their recurring activities as planner tasks.";
+  const model = await getModel();
   const result = await model.generateContent(prompt);
   const parsed = JSON.parse(result.response.text()) as { routines?: unknown };
   if (!Array.isArray(parsed.routines)) return [];
