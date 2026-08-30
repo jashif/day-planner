@@ -1,15 +1,25 @@
 import { useCallback, useEffect, useState } from "react";
 
-export type Theme = "light" | "dark";
+export type Theme = "calm" | "focus" | "warm" | "play" | "dark";
+
+export const THEMES: { id: Theme; label: string; description: string }[] = [
+  { id: "calm", label: "Calm", description: "Paper and sage" },
+  { id: "focus", label: "Focus", description: "Clear blue and mint" },
+  { id: "warm", label: "Warm", description: "Coral and honey" },
+  { id: "play", label: "Play", description: "Bright and lively" },
+  { id: "dark", label: "Night", description: "Low-light mode" },
+];
 
 const STORAGE_KEY = "theme";
+const THEME_IDS = THEMES.map((theme) => theme.id);
 
 const getSystemTheme = (): Theme =>
-  window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "calm";
 
 const getStoredTheme = (): Theme | null => {
   const stored = localStorage.getItem(STORAGE_KEY);
-  return stored === "light" || stored === "dark" ? stored : null;
+  if (stored === "light") return "calm";
+  return THEME_IDS.includes(stored as Theme) ? (stored as Theme) : null;
 };
 
 const applyTheme = (theme: Theme | null) => {
@@ -44,7 +54,7 @@ export const useTheme = () => {
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setTheme(effectiveTheme === "dark" ? "light" : "dark");
+    setTheme(effectiveTheme === "dark" ? "calm" : "dark");
   }, [effectiveTheme, setTheme]);
 
   return { theme: effectiveTheme, isExplicit: explicitTheme !== null, setTheme, toggleTheme };

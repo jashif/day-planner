@@ -6,7 +6,14 @@ interface AssignedTaskListProps {
 }
 
 export const AssignedTaskList = ({ tasks, onComplete }: AssignedTaskListProps) => {
-  if (tasks.length === 0) return null;
+  if (tasks.length === 0) {
+    return (
+      <section className="assigned-tasks is-empty">
+        <p className="assigned-tasks-heading">Shared with you</p>
+        <p className="assigned-tasks-empty">Tasks friends assign to you will show up here.</p>
+      </section>
+    );
+  }
 
   return (
     <section className="assigned-tasks">

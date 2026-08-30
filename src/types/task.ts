@@ -28,6 +28,7 @@ export interface Task {
   sharedByName?: string | null;
   completedByUid?: string | null;
   completedByName?: string | null;
+  completedAt?: number | null;
 }
 
 /** A task owned by someone else and shared with the signed-in user. */

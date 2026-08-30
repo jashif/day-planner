@@ -6,6 +6,7 @@ interface TabsProps {
   onChange: (view: View) => void;
   sections: string[];
   activeSection: string;
+  activeSectionTaskCount: number;
   onSectionChange: (section: string) => void;
   onAddSection: (name: string) => Promise<void>;
 }
@@ -21,6 +22,7 @@ export const Tabs = ({
   onChange,
   sections,
   activeSection,
+  activeSectionTaskCount,
   onSectionChange,
   onAddSection,
 }: TabsProps) => {
@@ -46,6 +48,11 @@ export const Tabs = ({
 
   return (
     <div className="tabs-panel">
+      <div className="section-context">
+        <span>Section</span>
+        <strong>{activeSection}</strong>
+        <span>{activeSectionTaskCount} open</span>
+      </div>
       <div className="section-tabs" role="tablist" aria-label="Task sections">
         {sections.map((section) => (
           <button

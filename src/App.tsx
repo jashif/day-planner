@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { Header } from "./components/Header";
 import { Composer } from "./components/Composer";
+import { CircleView } from "./components/CircleView";
 import { Tabs } from "./components/Tabs";
 import { TaskList } from "./components/TaskList";
 import { AssignedTaskList } from "./components/AssignedTaskList";
 import { AuthScreen } from "./components/AuthScreen";
+import { FriendCircle } from "./components/FriendCircle";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { ReminderPrompt } from "./components/ReminderPrompt";
 import { TopBar } from "./components/TopBar";
@@ -21,6 +23,8 @@ import { useAssignedTasks } from "./hooks/useAssignedTasks";
 import { acceptInvite } from "./db/friendsDb";
 import { todayISO } from "./utils/dates";
 import type { View } from "./types/task";
+
+type AppArea = "today" | "circle" | "shared" | "friends";
 
 // Pulls in the AI/speech routine flow only when a user actually needs onboarding.
 const OnboardingScreen = lazy(() =>
@@ -51,11 +55,13 @@ const PlannerApp = ({
     createTask,
     toggleTask,
     removeTask,
+    moveTask,
     setSubtasks,
     toggleSubtask,
     rescheduleTask,
   } = useTasks(uid, profile.recordPoint);
   const [view, setView] = useState<View>("list");
+  const [area, setArea] = useState<AppArea>("today");
   const [presetTime, setPresetTime] = useState<string | null>(null);
   const { logOut, deleteAccount } = useAuth();
   const today = todayISO();
@@ -65,6 +71,7 @@ const PlannerApp = ({
   const sectionTasks = tasks.filter(
     (task) => (task.section ?? "Home") === sectionState.activeSection,
   );
+  const activeSectionTaskCount = sectionTasks.filter((task) => !task.done).length;
 
   const streakRecordedRef = useRef(false);
   useEffect(() => {
@@ -107,6 +114,38 @@ const PlannerApp = ({
         onToggleReminder={reminder.isEnabled ? reminder.disable : reminder.enable}
       />
       <Header todaysTasks={todaysTasks} currentStreak={streak.currentStreak} />
+      <nav className="app-nav" aria-label="Primary">
+        <button
+          className={`app-nav-item ${area === "today" ? "is-active" : ""}`}
+          type="button"
+          onClick={() => setArea("today")}
+        >
+          Today
+        </button>
+        <button
+          className={`app-nav-item ${area === "shared" ? "is-active" : ""}`}
+          type="button"
+          onClick={() => setArea("shared")}
+        >
+          Shared
+          {assigned.tasks.length > 0 && <span>{assigned.tasks.length}</span>}
+        </button>
+        <button
+          className={`app-nav-item ${area === "circle" ? "is-active" : ""}`}
+          type="button"
+          onClick={() => setArea("circle")}
+        >
+          Circle
+        </button>
+        <button
+          className={`app-nav-item ${area === "friends" ? "is-active" : ""}`}
+          type="button"
+          onClick={() => setArea("friends")}
+        >
+          Friends
+          {friends.length > 0 && <span>{friends.length}</span>}
+        </button>
+      </nav>
       {error && <p className="sync-error">Couldn&apos;t sync: {error}</p>}
       {assigned.error && (
         <p className="sync-error">Couldn&apos;t sync shared tasks: {assigned.error}</p>
@@ -114,36 +153,62 @@ const PlannerApp = ({
       {reminder.shouldPrompt && (
         <ReminderPrompt onEnable={reminder.enable} onDismiss={reminder.dismissPrompt} />
       )}
-      <AssignedTaskList tasks={assigned.tasks} onComplete={assigned.complete} />
-      <Composer
-        onAdd={createTask}
-        section={sectionState.activeSection}
-        friends={friends}
-        myDisplayName={profile.displayName}
-        presetTime={presetTime}
-        onConsumePreset={() => setPresetTime(null)}
-      />
-      <Tabs
-        activeView={view}
-        onChange={setView}
-        sections={sectionState.sections}
-        activeSection={sectionState.activeSection}
-        onSectionChange={sectionState.setActiveSection}
-        onAddSection={sectionState.addSection}
-      />
-      <main className="list-wrap">
-        <TaskList
-          tasks={sectionTasks}
-          view={view}
-          onToggle={toggleTask}
-          onRemove={removeTask}
-          onSetSubtasks={setSubtasks}
-          onToggleSubtask={toggleSubtask}
-          onReschedule={rescheduleTask}
-          onQuickAddAt={setPresetTime}
-          aiLimit={aiLimit}
+      {area === "today" && (
+        <>
+          <Composer
+            onAdd={createTask}
+            section={sectionState.activeSection}
+            friends={friends}
+            myDisplayName={profile.displayName}
+            presetTime={presetTime}
+            onConsumePreset={() => setPresetTime(null)}
+          />
+          <Tabs
+            activeView={view}
+            onChange={setView}
+            sections={sectionState.sections}
+            activeSection={sectionState.activeSection}
+            activeSectionTaskCount={activeSectionTaskCount}
+            onSectionChange={sectionState.setActiveSection}
+            onAddSection={sectionState.addSection}
+          />
+          <main className="list-wrap">
+            <TaskList
+              tasks={sectionTasks}
+              view={view}
+              sections={sectionState.sections}
+              onToggle={toggleTask}
+              onRemove={removeTask}
+              onMove={moveTask}
+              onSetSubtasks={setSubtasks}
+              onToggleSubtask={toggleSubtask}
+              onReschedule={rescheduleTask}
+              onQuickAddAt={setPresetTime}
+              aiLimit={aiLimit}
+            />
+          </main>
+        </>
+      )}
+      {area === "shared" && (
+        <AssignedTaskList tasks={assigned.tasks} onComplete={assigned.complete} />
+      )}
+      {area === "circle" && (
+        <CircleView
+          tasks={tasks}
+          assignedTasks={assigned.tasks}
+          friends={friends}
+          myPoints={profile.points}
+          currentStreak={streak.currentStreak}
         />
-      </main>
+      )}
+      {area === "friends" && (
+        <section className="friends-home">
+          <FriendCircle uid={uid} friends={friends} />
+          <button className="add-btn" type="button" onClick={() => setArea("today")}>
+            Add a task
+          </button>
+        </section>
+      )}
     </div>
   );
 };

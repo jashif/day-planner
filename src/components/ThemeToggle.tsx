@@ -1,38 +1,46 @@
-import { useTheme } from "../hooks/useTheme";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { Check, Moon, Palette } from "lucide-react";
+import { THEMES, useTheme } from "../hooks/useTheme";
 
 export const ThemeToggle = () => {
-  const { theme, toggleTheme } = useTheme();
-  const isDark = theme === "dark";
+  const { theme, setTheme } = useTheme();
+  const activeTheme = THEMES.find((item) => item.id === theme) ?? THEMES[0];
 
   return (
-    <button
-      className="theme-toggle"
-      type="button"
-      onClick={toggleTheme}
-      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
-      aria-pressed={isDark}
-      title={isDark ? "Switch to light theme" : "Switch to dark theme"}
-    >
-      {isDark ? (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.6" />
-          <path
-            d="M12 2.5v2.2M12 19.3v2.2M21.5 12h-2.2M4.7 12H2.5M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6M18.4 18.4l-1.6-1.6M7.2 7.2 5.6 5.6"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-          />
-        </svg>
-      ) : (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path
-            d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
-        </svg>
-      )}
-    </button>
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <button
+          className="theme-toggle theme-picker-trigger"
+          type="button"
+          aria-label={`Theme: ${activeTheme.label}`}
+          title={`Theme: ${activeTheme.label}`}
+        >
+          {theme === "dark" ? (
+            <Moon size={15} aria-hidden="true" />
+          ) : (
+            <Palette size={15} aria-hidden="true" />
+          )}
+        </button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content className="theme-menu" align="end" sideOffset={8}>
+          <DropdownMenu.Label className="theme-menu-label">Theme</DropdownMenu.Label>
+          {THEMES.map((item) => (
+            <DropdownMenu.Item
+              key={item.id}
+              className="theme-menu-item"
+              onSelect={() => setTheme(item.id)}
+            >
+              <span className={`theme-swatch ${item.id}`} aria-hidden="true" />
+              <span className="theme-menu-copy">
+                <span>{item.label}</span>
+                <small>{item.description}</small>
+              </span>
+              {theme === item.id && <Check size={14} aria-hidden="true" />}
+            </DropdownMenu.Item>
+          ))}
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   );
 };

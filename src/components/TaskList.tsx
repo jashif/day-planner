@@ -10,8 +10,10 @@ const DayTimeline = lazy(() => import("./DayTimeline").then((m) => ({ default: m
 interface TaskListProps {
   tasks: Task[];
   view: View;
+  sections: string[];
   onToggle: (id: string) => void;
   onRemove: (id: string) => void;
+  onMove: (id: string, section: string) => void;
   onSetSubtasks: (id: string, subtasks: Subtask[]) => Promise<void>;
   onToggleSubtask: (id: string, subtaskId: string) => Promise<void>;
   onReschedule: (id: string, time: string | null) => void;
@@ -30,8 +32,10 @@ const sortTasks = (tasks: Task[]): Task[] =>
 export const TaskList = ({
   tasks,
   view,
+  sections,
   onToggle,
   onRemove,
+  onMove,
   onSetSubtasks,
   onToggleSubtask,
   onReschedule,
@@ -71,8 +75,10 @@ export const TaskList = ({
     <TaskRow
       key={task.id}
       task={task}
+      sections={sections}
       onToggle={onToggle}
       onRemove={onRemove}
+      onMove={onMove}
       onSetSubtasks={onSetSubtasks}
       onToggleSubtask={onToggleSubtask}
       aiLimit={aiLimit}

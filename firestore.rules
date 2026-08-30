@@ -38,7 +38,7 @@ service cloud.firestore {
         request.auth.uid == uid ||
         (request.auth.uid == resource.data.sharedWithUid &&
           request.resource.data.diff(resource.data).affectedKeys()
-            .hasOnly(['done', 'completedByUid', 'completedByName', 'subtasks']))
+            .hasOnly(['done', 'completedByUid', 'completedByName', 'completedAt', 'subtasks']))
       );
     }
 
@@ -48,7 +48,7 @@ service cloud.firestore {
       allow update: if request.auth != null
         && request.auth.uid == resource.data.sharedWithUid
         && request.resource.data.diff(resource.data).affectedKeys()
-          .hasOnly(['done', 'completedByUid', 'completedByName', 'subtasks']);
+          .hasOnly(['done', 'completedByUid', 'completedByName', 'completedAt', 'subtasks']);
     }
 
     // Daily AI-breakdown usage counter, one doc per user per calendar day (id = "YYYY-MM-DD").

@@ -54,9 +54,6 @@ export const TopBar = ({
       <span className="topbar-email">{email}</span>
       <div className="topbar-actions">
         <ThemeToggle />
-        <button className="routine-btn" type="button" onClick={onSetUpRoutine}>
-          Set up routine
-        </button>
         <div className="account-menu">
           <button
             className="sign-out-btn"
