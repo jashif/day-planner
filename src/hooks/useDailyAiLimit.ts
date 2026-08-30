@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
-import { DAILY_AI_LIMIT, recordAiUsage, subscribeToAiUsage } from "../db/usageDb";
+import { redeemAiBoost } from "../db/profileDb";
+import {
+  DAILY_AI_LIMIT,
+  recordAiUsage,
+  subscribeToAiLimit,
+  subscribeToAiUsage,
+} from "../db/usageDb";
 
 export interface AiLimit {
   count: number;
@@ -7,24 +13,33 @@ export interface AiLimit {
   remaining: number;
   isLimitReached: boolean;
   recordUsage: () => Promise<void>;
+  redeemBoost: () => Promise<void>;
 }
 
 /** Shared daily quota for all Gemini-powered actions (task breakdown, voice task capture). */
 export const useDailyAiLimit = (uid: string): AiLimit => {
   const [count, setCount] = useState(0);
+  const [limit, setLimit] = useState(DAILY_AI_LIMIT);
 
   useEffect(() => {
     const unsubscribe = subscribeToAiUsage(uid, setCount);
     return unsubscribe;
   }, [uid]);
 
+  useEffect(() => {
+    const unsubscribe = subscribeToAiLimit(uid, setLimit);
+    return unsubscribe;
+  }, [uid]);
+
   const recordUsage = useCallback(() => recordAiUsage(uid), [uid]);
+  const redeemBoost = useCallback(() => redeemAiBoost(uid), [uid]);
 
   return {
     count,
-    limit: DAILY_AI_LIMIT,
-    remaining: Math.max(0, DAILY_AI_LIMIT - count),
-    isLimitReached: count >= DAILY_AI_LIMIT,
+    limit,
+    remaining: Math.max(0, limit - count),
+    isLimitReached: count >= limit,
     recordUsage,
+    redeemBoost,
   };
 };

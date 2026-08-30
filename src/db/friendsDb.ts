@@ -2,8 +2,10 @@ import {
   collection,
   doc,
   getDoc,
+  increment,
   onSnapshot,
   query,
+  runTransaction,
   serverTimestamp,
   setDoc,
   where,
@@ -30,11 +32,20 @@ export const acceptInvite = async (code: string, myUid: string): Promise<boolean
   const inviterUid = snap.data()?.inviterUid as string | undefined;
   if (!inviterUid || inviterUid === myUid) return false;
 
-  await setDoc(doc(db, "friendships", pairId(inviterUid, myUid)), {
-    members: [inviterUid, myUid].sort(),
-    createdAt: serverTimestamp(),
+  let created = false;
+  await runTransaction(db, async (transaction) => {
+    const friendship = doc(db, "friendships", pairId(inviterUid, myUid));
+    const existing = await transaction.get(friendship);
+    if (existing.exists()) return;
+
+    transaction.set(friendship, {
+      members: [inviterUid, myUid].sort(),
+      createdAt: serverTimestamp(),
+    });
+    transaction.set(doc(db, "profiles", myUid), { points: increment(50) }, { merge: true });
+    created = true;
   });
-  return true;
+  return created;
 };
 
 export const subscribeToFriendUids = (

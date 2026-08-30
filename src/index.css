@@ -673,6 +673,59 @@ textarea {
   line-height: 1.25;
 }
 
+.circle-rewards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.circle-rewards > div {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+  box-shadow: var(--shadow);
+}
+
+.circle-rewards strong {
+  display: block;
+  color: var(--ink);
+  font-family: "Fraunces", serif;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.circle-rewards span {
+  display: block;
+  margin-top: 5px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.redeem-btn {
+  margin-top: 12px;
+  width: 100%;
+  border: 1px solid var(--ochre);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ochre) 12%, transparent);
+  color: var(--ochre);
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 9px 12px;
+  cursor: pointer;
+}
+
+.redeem-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.redeem-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ochre) 18%, transparent);
+}
+
 .activity-feed ul {
   list-style: none;
   margin: 0;
@@ -2432,6 +2485,9 @@ textarea {
   }
   .circle-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .circle-rewards {
+    grid-template-columns: 1fr;
   }
   .task-form-row {
     gap: 6px;

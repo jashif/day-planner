@@ -199,6 +199,8 @@ const PlannerApp = ({
           friends={friends}
           myPoints={profile.points}
           currentStreak={streak.currentStreak}
+          aiLimit={aiLimit}
+          onRedeemAiBoost={aiLimit.redeemBoost}
         />
       )}
       {area === "friends" && (
