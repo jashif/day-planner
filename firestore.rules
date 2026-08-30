@@ -42,6 +42,15 @@ service cloud.firestore {
       );
     }
 
+    // Collection-group access for tasks shared with the signed-in user.
+    match /{path=**}/tasks/{taskId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.sharedWithUid;
+      allow update: if request.auth != null
+        && request.auth.uid == resource.data.sharedWithUid
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['done', 'completedByUid', 'completedByName', 'subtasks']);
+    }
+
     // Daily AI-breakdown usage counter, one doc per user per calendar day (id = "YYYY-MM-DD").
     // Enforces the free-tier cap server-side so it can't be bypassed by editing client code.
     match /users/{uid}/usage/{day} {
