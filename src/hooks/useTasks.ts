@@ -43,7 +43,12 @@ export const useTasks = (uid: string, onPoint?: () => void) => {
       const task = tasks.find((t) => t.id === id);
       if (!task) return;
       try {
-        await updateTask(uid, id, { done: !task.done });
+        await updateTask(uid, id, {
+          done: !task.done,
+          completedByName: !task.done ? "You" : null,
+          completedByUid: !task.done ? uid : null,
+          completedAt: !task.done ? Date.now() : null,
+        });
         if (!task.done) onPoint?.();
         if (!task.done && task.recurrence && task.recurrence !== "none") {
           const nextDate = nextOccurrenceISO(
@@ -112,6 +117,18 @@ export const useTasks = (uid: string, onPoint?: () => void) => {
     [uid],
   );
 
+  const moveTask = useCallback(
+    async (id: string, section: string) => {
+      try {
+        await updateTask(uid, id, { section });
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to move task");
+      }
+    },
+    [uid],
+  );
+
   const toggleSubtask = useCallback(
     async (id: string, subtaskId: string) => {
       const task = tasks.find((t) => t.id === id);
@@ -137,5 +154,6 @@ export const useTasks = (uid: string, onPoint?: () => void) => {
     setSubtasks,
     toggleSubtask,
     rescheduleTask,
+    moveTask,
   };
 };

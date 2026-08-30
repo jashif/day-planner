@@ -19,6 +19,11 @@ import type { AssignedTask, NewTaskInput, Task } from "../types/task";
 
 const tasksCollection = (uid: string) => collection(db, "users", uid, "tasks");
 
+const timestampMillis = (value: unknown): number | null => {
+  if (typeof value === "number") return value;
+  return (value as { toMillis?: () => number } | null)?.toMillis?.() ?? null;
+};
+
 export const subscribeToTasks = (
   uid: string,
   onChange: (tasks: Task[]) => void,
@@ -46,6 +51,7 @@ export const subscribeToTasks = (
           sharedByName: data.sharedByName ?? null,
           completedByUid: data.completedByUid ?? null,
           completedByName: data.completedByName ?? null,
+          completedAt: timestampMillis(data.completedAt),
         } as Task;
       });
       onChange(tasks);
@@ -69,6 +75,7 @@ export const addTask = async (uid: string, input: NewTaskInput): Promise<void> =
     sharedByName: input.sharedByName ?? null,
     completedByUid: null,
     completedByName: null,
+    completedAt: null,
   });
 };
 
@@ -150,6 +157,7 @@ export const subscribeToAssignedTasks = (
           sharedByName: data.sharedByName ?? null,
           completedByUid: data.completedByUid ?? null,
           completedByName: data.completedByName ?? null,
+          completedAt: timestampMillis(data.completedAt),
         } as AssignedTask;
       });
       onChange(tasks);
@@ -168,5 +176,6 @@ export const completeAssignedTask = async (
     done: true,
     completedByUid: completerUid,
     completedByName: completerName,
+    completedAt: serverTimestamp(),
   });
 };

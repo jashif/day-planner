@@ -1,10 +1,28 @@
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { todayISO } from "../utils/dates";
+import { parseNaturalTaskText } from "../utils/naturalTask";
 import { useSpeechRecognition } from "../hooks/useSpeechRecognition";
 import { cleanVoiceTranscript } from "../utils/voiceTranscript";
 import type { Friend } from "../hooks/useFriends";
 import type { NewTaskInput, Priority, Recurrence } from "../types/task";
+
+const TEMPLATES: { label: string; title: string; recurrence: Recurrence; priority: Priority }[] = [
+  {
+    label: "Morning reset",
+    title: "Drink water and plan the day",
+    recurrence: "daily",
+    priority: "medium",
+  },
+  { label: "Groceries", title: "Buy groceries", recurrence: "weekly", priority: "medium" },
+  {
+    label: "Focus block",
+    title: "Do one focused work block",
+    recurrence: "none",
+    priority: "high",
+  },
+  { label: "Check in", title: "Check in with a friend", recurrence: "weekly", priority: "low" },
+];
 
 interface ComposerProps {
   onAdd: (input: NewTaskInput) => Promise<void>;
@@ -51,13 +69,15 @@ export const Composer = ({
     if (!trimmed) return;
 
     try {
-      const friend = friends.find((f) => f.uid === sharedWithUid);
+      const parsed = parseNaturalTaskText(trimmed, friends);
+      const nextSharedWithUid = sharedWithUid || parsed.sharedWithUid || "";
+      const friend = friends.find((f) => f.uid === nextSharedWithUid);
       await onAdd({
-        title: trimmed,
-        date,
-        time,
+        title: parsed.title,
+        date: parsed.date ?? date,
+        time: parsed.time ?? time,
         priority,
-        recurrence,
+        recurrence: parsed.recurrence ?? recurrence,
         section,
         sharedWithUid: friend?.uid ?? null,
         sharedWithName: friend?.displayName ?? null,
@@ -90,7 +110,17 @@ export const Composer = ({
     setTitle(cleanVoiceTranscript(transcript));
   };
 
-  const hasDetails = Boolean(time) || priority !== "medium" || recurrence !== "none";
+  const useTemplate = (template: (typeof TEMPLATES)[number]) => {
+    setTitle(template.title);
+    setPriority(template.priority);
+    setRecurrence(template.recurrence);
+    setDate(todayISO());
+    setShowMore(true);
+    titleInputRef.current?.focus();
+  };
+
+  const hasDetails =
+    Boolean(time) || priority !== "medium" || recurrence !== "none" || Boolean(sharedWithUid);
 
   return (
     <section className="composer">
@@ -99,7 +129,7 @@ export const Composer = ({
           <input
             type="text"
             className="title-input"
-            placeholder="Add something to do…"
+            placeholder={`Add to ${section}…`}
             autoComplete="off"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -159,6 +189,18 @@ export const Composer = ({
         {(speech.isListening || voiceError) && (
           <p className="voice-status">{voiceError ? voiceError : "Listening…"}</p>
         )}
+        <div className="template-row" aria-label="Task templates">
+          {TEMPLATES.map((template) => (
+            <button
+              key={template.label}
+              className="template-chip"
+              type="button"
+              onClick={() => useTemplate(template)}
+            >
+              {template.label}
+            </button>
+          ))}
+        </div>
         {showMore && (
           <div className="task-form-row">
             <input

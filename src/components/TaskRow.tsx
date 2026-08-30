@@ -6,8 +6,10 @@ import type { Subtask, Task } from "../types/task";
 
 interface TaskRowProps {
   task: Task;
+  sections: string[];
   onToggle: (id: string) => void;
   onRemove: (id: string) => void;
+  onMove: (id: string, section: string) => void;
   onSetSubtasks: (id: string, subtasks: Subtask[]) => Promise<void>;
   onToggleSubtask: (id: string, subtaskId: string) => Promise<void>;
   aiLimit: AiLimit;
@@ -15,8 +17,10 @@ interface TaskRowProps {
 
 export const TaskRow = ({
   task,
+  sections,
   onToggle,
   onRemove,
+  onMove,
   onSetSubtasks,
   onToggleSubtask,
   aiLimit,
@@ -94,6 +98,20 @@ export const TaskRow = ({
             )}
           </div>
         </div>
+        {sections.length > 1 && (
+          <select
+            className="move-task-select"
+            value={task.section ?? "Home"}
+            onChange={(event) => onMove(task.id, event.target.value)}
+            aria-label={`Move ${task.title} to another section`}
+          >
+            {sections.map((section) => (
+              <option key={section} value={section}>
+                {section}
+              </option>
+            ))}
+          </select>
+        )}
         <button
           className={`breakdown-toggle ${isOpen ? "is-active" : ""} ${subtasks.length > 0 ? "has-steps" : ""}`}
           aria-label={subtasks.length > 0 ? "View task steps" : "Break task into steps"}

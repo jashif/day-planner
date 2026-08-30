@@ -6,7 +6,8 @@
       // Applied before any stylesheet loads to avoid a light/dark flash on load.
       (function () {
         var stored = localStorage.getItem("theme");
-        if (stored === "light" || stored === "dark") {
+        if (stored === "light") stored = "calm";
+        if (["calm", "focus", "warm", "play", "dark"].indexOf(stored) !== -1) {
           document.documentElement.dataset.theme = stored;
         }
       })();
