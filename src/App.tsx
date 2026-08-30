@@ -108,6 +108,9 @@ const PlannerApp = ({
       />
       <Header todaysTasks={todaysTasks} currentStreak={streak.currentStreak} />
       {error && <p className="sync-error">Couldn&apos;t sync: {error}</p>}
+      {assigned.error && (
+        <p className="sync-error">Couldn&apos;t sync shared tasks: {assigned.error}</p>
+      )}
       {reminder.shouldPrompt && (
         <ReminderPrompt onEnable={reminder.enable} onDismiss={reminder.dismissPrompt} />
       )}
